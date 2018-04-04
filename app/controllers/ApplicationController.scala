@@ -339,6 +339,7 @@ class ApplicationController @Inject() (cc: ControllerComponents, implicit val ec
   }
 
   def usageTerms() = silhouette.UserAwareAction.async { implicit request => Future.successful(Ok(views.html.usageTerms(request.identity, config))) }
+
   /**
    * Handles the index action.
    *
@@ -346,11 +347,11 @@ class ApplicationController @Inject() (cc: ControllerComponents, implicit val ec
    */
   def index(sort: String, q: String, p: Long) = silhouette.UserAwareAction.async { implicit request =>
     val page: Long = if (p < 1L) 1L else p
-    val numberOfQuestions = sort match {
-      case "unanswered" => Await.result(daoRead.numberOfUnansweredQuestions, 30.seconds)
-      case "unsolved" => Await.result(daoRead.numberOfUnsolvedQuestions, 30.seconds)
-      case "search" => Await.result(daoRead.numberOfQuestionsByMatch(q), 30.seconds).head
-      case _ => Await.result(daoRead.numberOfQuestions, 30.seconds)
+    val futureNumberOfQuestions = sort match {
+      case "unanswered" => daoRead.numberOfUnansweredQuestions
+      case "unsolved" => daoRead.numberOfUnsolvedQuestions
+      case "search" => daoRead.numberOfQuestionsByMatch(q)  //.head
+      case _ => daoRead.numberOfQuestions
     }
     val futureQuestions = sort match {
       case "voted" => daoRead.questionsSortedByVoted(page)
@@ -361,10 +362,17 @@ class ApplicationController @Inject() (cc: ControllerComponents, implicit val ec
       case "search" => daoRead.questionsByMatch(q, page)
       case _ => daoRead.questionsSortedByLastUpdate(page)
     }
-    val questions: Seq[QuestionUser] = Await.result(futureQuestions, 30.seconds).map(q => QuestionUser.tupled(q))
-    val questionsTags: Seq[QuestionTag] = Await.result(daoRead.questionsTags(questions.map(_.informationRow.id)), 30.seconds).map(q => QuestionTag.tupled(q))
+    val (numberOfQuestions, questions) = Await.result(for {
+      numberValue <- futureNumberOfQuestions
+      questionValue <- futureQuestions
+    } yield (numberValue, questionValue.map(q => QuestionUser.tupled(q))), 30.seconds)
+    val futureRecentTags: Future[Seq[models.daos.slick.Tables.TagxRow]] = daoRead.recentTags()
+    val futureQuestionsTags = daoRead.questionsTags(questions.map(_.informationRow.id))
+    val (recentTags: Seq[models.daos.slick.Tables.TagxRow], questionsTags) = Await.result(for {
+      recentTagsValue <- futureRecentTags
+      questionsTagsValue <- futureQuestionsTags
+    } yield (recentTagsValue, questionsTagsValue.map(q => QuestionTag.tupled(q))), 30.seconds)
     questions.foreach(q => q.tags = questionsTags.filter(_.questioninformationId == q.row.informationId))
-    val recentTags: Seq[models.daos.slick.Tables.TagxRow] = Await.result(daoRead.recentTags(), 30.seconds)
     request.identity match {
       case Some(user) =>
         user.account match {
@@ -378,15 +386,18 @@ class ApplicationController @Inject() (cc: ControllerComponents, implicit val ec
   }
 
   def ranking(ranking: String, p: Long) = silhouette.UserAwareAction.async { implicit request =>
-    val numberOfUsers = Await.result(daoRead.numberOfUsers, 30.seconds)
-    val authorsRow: Seq[models.daos.slick.Tables.UsersRow] = Await.result(daoRead.usersSortedByKarma(p), 30.seconds)
-    Future.successful(Ok(views.html.ranking(request.identity, numberOfUsers, authorsRow, config)))
+    val futureNumberOfUsers = daoRead.numberOfUsers
+    val futureAuthorsRow: Future[Seq[models.daos.slick.Tables.UsersRow]] = daoRead.usersSortedByKarma(p)
+    for {
+      numberOfUsers <- futureNumberOfUsers
+      authorsRow <- futureAuthorsRow
+    } yield Ok(views.html.ranking(request.identity, numberOfUsers, authorsRow, config))
   }
 
   def rankingTag(tag: String) = silhouette.UserAwareAction.async { implicit request =>
     import models.daos.slick.QA
-    val tagNo: Long = Await.result(daoRead.tagNo(tag), 30.seconds).getOrElse(0)
     val oneMonthAgo = LocalDateTime.now().plusMonths(-1)
+    val tagNo: Long = Await.result(daoRead.tagNo(tag), 30.seconds).getOrElse(0)
     val answersRanking = Await.result(daoRead.tagRanking(tagNo, QA.ANSWER), 30.seconds).map(tr => TagRanking.tupled(tr))
     val answers30DayRanking = answersRanking.map { tr =>
       val rew = tr.reputationEventRows.filter(_.date.isDefined).filter(rew => rew.date.get.toLocalDateTime().compareTo(oneMonthAgo) > 0);
@@ -402,7 +413,6 @@ class ApplicationController @Inject() (cc: ControllerComponents, implicit val ec
   }
 
   def search(query: String) = silhouette.UserAwareAction.async { implicit request =>
-
     Future.successful(Ok(Await.result(daoRead.questionsByMatch("tagging", 5), 30.seconds).toString))
   }
 

@@ -31,7 +31,7 @@ class DAORead @Inject() (protected val dbConfigProvider: DatabaseConfigProvider,
 
   def getDbConfig = dbConfig
 
-  def numberOfQuestionsByMatch(q: String) = db.run((sql"SELECT count(Question.id) FROM `QuestionInformation` JOIN Question ON QuestionInformation.id = Question.information_id where MATCH(title,description) AGAINST (${q}) > 0").as[Int])
+  def numberOfQuestionsByMatch(q: String) = db.run((sql"SELECT count(Question.id) FROM `QuestionInformation` JOIN Question ON QuestionInformation.id = Question.information_id where MATCH(title,description) AGAINST (${q}) > 0").as[Int].head)
 
   def numberOfQuestions: Future[Int] = db.run(Tables.Question.filter(_.deleted === false).size.result)
 

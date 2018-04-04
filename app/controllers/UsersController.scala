@@ -45,19 +45,30 @@ class UsersController @Inject() (cc: ControllerComponents, implicit val ec: Exec
   val tagDAOImpl = new models.daos.TagDAOImpl
   tagDAOImpl.apply(Await.result(dao.tags, 30.seconds))
 
-  def users(number: Long, name: String) = silhouette.UserAwareAction.async { implicit request =>
-    val noQuestions = Await.result(dao.numberofVotesQuestionsByAuthorId(number), 30.seconds)
+  def users(number: Long, name: String) = silhouette.SecuredAction.async { implicit request =>
+    Logger.info(request.identity.email.getOrElse("Unidentified") + " displayed user number " + number)
     val displayUser = Await.result(dao.user(number), 30.seconds)
-    val questions = Await.result(dao.votesQuestionsByAuthorIdSortByVoteCount(number, 1), 30.seconds).map(q => VoteTitleModel.tupled(q))
-    val noAnswers = Await.result(dao.numberofVotesAnswersByAuthorId(number), 30.seconds)
-    val answers = Await.result(dao.votesAnswersByAuthorIdSortByVoteCount(number, 1), 30.seconds).map(a => VoteTitleModel.tupled(a))
-    val noWatches = Await.result(dao.numberofVotesWatchesByAuthorId(number), 30.seconds)
-    val watches = Await.result(dao.votesWatchesByAuthorIdSortByVoteCount(number, 1), 30.seconds).map(a => VoteTitleModel.tupled(a))
-    val reputationEvents = Await.result(dao.votesReputationEventByAuthorIdSortByLastUpdateAt(number, config.get[Long]("elements_per_page")), 30.seconds).map(a => VoteTitleModel(a._1, a._2, a._3.toLong, a._4, a._5))
-    val tags = Await.result(dao.tagsByAuthorIdSortByUsageCount(number), 30.seconds)
     displayUser match {
-      case Some(displayUser) => Future.successful(Ok(views.html.users(request.identity, displayUser, noQuestions, questions, noAnswers, answers, noWatches,
-        watches, reputationEvents, tags, config)))
+      case Some(displayUser) => 
+        val futureNoQuestions = dao.numberofVotesQuestionsByAuthorId(number)
+        val futureQuestions = dao.votesQuestionsByAuthorIdSortByVoteCount(number, 1)
+        val futureNoAnswers = dao.numberofVotesAnswersByAuthorId(number)
+        val futureAnswers = dao.votesAnswersByAuthorIdSortByVoteCount(number, 1)
+        val futureNoWatches = dao.numberofVotesWatchesByAuthorId(number)
+        val futureWatches = dao.votesWatchesByAuthorIdSortByVoteCount(number, 1)
+        val futureReputationEvents = dao.votesReputationEventByAuthorIdSortByLastUpdateAt(number, config.get[Long]("elements_per_page"))
+        val futureTags = dao.tagsByAuthorIdSortByUsageCount(number)
+        for {
+          noQuestions <- futureNoQuestions
+          questions <- futureQuestions
+          noAnswers <- futureNoAnswers 
+          answers <- futureAnswers
+          noWatches <- futureNoWatches
+          watches <- futureWatches
+          reputationEvents <- futureReputationEvents
+          tags <- futureTags
+        } yield Ok(views.html.users(Some(request.identity), displayUser, noQuestions, questions.map(q => VoteTitleModel.tupled(q)), noAnswers, answers.map(a => VoteTitleModel.tupled(a)), 
+            noWatches, watches.map(a => VoteTitleModel.tupled(a)), reputationEvents.map(a => VoteTitleModel(a._1, a._2, a._3.toLong, a._4, a._5)), tags, config))
       case _ => Future.successful(Ok("User does not exist"))
     }
   }
