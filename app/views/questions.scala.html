@@ -1,0 +1,62 @@
+@(user: Option[User], numberOfQuestions: Int, questions: Seq[QuestionUser], recentTags: Seq[models.daos.slick.Tables.TagxRow], config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
+@import play.api.Play
+@import play.api.Play.current
+@import utils.RelativeTime
+@import views.html.snippets._
+@main(messages("metas.default.description",messages("site.name")), user) {
+@if(user.isEmpty){@aboutbanner(messages)}
+<section class="first-content content">
+	<div class="subheader">
+		<div class=" subheader-with-tab ">
+		@{val search=request.queryString.get("query").getOrElse(Seq(messages(""))).head
+		  val pageTitle=if(request.path.length < 2){messages("menu.questions")}else{request.path.drop(1).capitalize}
+		  Html("""<h2 class="title page-title">"""+pageTitle+"&nbsp;"+search+"""</h2>""")
+		}
+        	<div class="tabs">
+				<a href="/top/voted">@messages("menu.top.voted")</a>
+				<a href="/top/answered">@messages("menu.top.answered")</a>
+				<a href="/top/viewed">@messages("menu.top.viewed")</a>			
+			</div>
+		</div>
+	</div>
+	@questionlist(user, questions, true)
+	@pager(numberOfQuestions,config.get[Int]("elements_per_page"))
+</section>
+<aside class="sidebar">
+	@recenttags(recentTags)
+</aside>
+<script src="/assets/js/about-banner.js"></script>
+<script src="/assets/js/hopscotch.js"></script>
+<script type="text/javascript">
+    var tour = {
+      id: "hello-hopscotch",
+      steps: [
+        {
+          title: "Votes",
+          content: "@messages("intro.home.votes")",
+          target: "votes",
+          placement: "top"
+        },
+       {
+          title: "Answers",
+          content: "@messages("intro.home.answers")",
+          target: "answers",
+          placement: "top"
+        },
+        {
+          title: "Tags",
+          content: "@messages("intro.home.tags")",
+          target: "tags-usage",
+          placement: "left"
+        },
+        {
+          title: "About",
+          content: "@messages("intro.about")",
+          target: "about",
+          placement: "bottom"
+        }
+      ]
+    };
+
+</script>
+}

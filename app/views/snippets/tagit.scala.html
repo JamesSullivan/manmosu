@@ -1,0 +1,42 @@
+@(tags: Seq[String])(implicit messages: Messages)
+<script>
+$(document).ready(
+(function tagit() {
+	var element = $('#tags');
+	var escapeMarkup = function (m) {
+		return m;
+	};
+	var ajaxResults = {};
+	element.on("select2:open", function (e) { 
+		clearHints(); 
+		document.getElementById('question-tags-hint').setAttribute('style', 'display: block;');
+    });
+	element.select2({
+		tags: true,
+		tokenSeparators: [','],
+		width: 'resolve',
+		placeholder: '@messages("tagmanager.search.placeholder")',
+		minimumInputLength: 3,
+		multiple: true,
+		ajax: {
+			dataType: 'json',
+			delay: 100,
+			url: function (params) {
+				return '/question/searchTags/' + params.term;
+			},
+			processResults: function (data) {
+				ajaxResults = {};
+		          return {
+		            results: data
+		          }
+			}
+		}
+	})
+	@for((t,i)<-tags.zipWithIndex){
+	var newOption@i = new Option('@t', '@t', true, true);
+	$('#tags').append(newOption@i);
+	}
+	$('#tags').trigger('change');
+})());
+
+</script>

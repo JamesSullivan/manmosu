@@ -1,0 +1,25 @@
+@(implicit messages: Messages)
+<section class="first-header">
+	<div class="container header-container">
+		<a class="logo big-logo sprite" href="/">@messages("site.name")</a>
+		<nav class="nav main-nav piped-nav">
+			<ul class="nav-items">
+				<li class="nav-item">
+					<a class="button current" href="/">@messages("menu.questions")</a>
+				</li>
+				<li class="nav-item menu-unanswered">
+					<a class="button unanswered " href="/unanswered">@messages("menu.unanswered")</a>
+				</li>
+				<li class="nav-item menu-rank">
+					<a class="button " href="/ranking">@messages("menu.users")</a>
+				</li>
+				@*<li class="nav-item">
+					<a class="button " href="/news">@messages("menu.news")</a>
+				</li>*@
+				<li class="ask nav-item">
+					<a class="button ask-a-question" href='/ask'>@messages("menu.question.ask")</a>
+				</li>
+			</ul>
+		</nav>
+	</div>
+</section>

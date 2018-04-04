@@ -1,0 +1,27 @@
+@(flagType: String, dataid: Long)(implicit messages: Messages)
+
+<div class="hidden modal modal-flag" id="@{flagType}-flag-modal@{dataid}">
+	<ul class="nav">
+		<li class="modal-close-button">x</li>
+	</ul>
+	<form class="validated-form" action="/@{flagType}/@{dataid}/mark">
+		<input type="radio" value="RUDE" name="flagType" id="flag-type-rude" />
+		<label for="flag-type-rude">Offensive or rude</label>
+		
+		<input type="radio" value="NOT_CONSTRUCTIVE" name="flagType" id="flag-type-notconstructive" />
+		<label for="flag-type-notconstructive">not constructive</label>
+			
+		<input type="radio" value="OBSOLETE" name="flagType" id="flag-type-obsolete" />
+		<label for="flag-type-obsolete">Obsolete</label>
+		
+		<input class="other-option" type="radio" value="OTHER" name="flagType" id="flag-type-other" data-reason-id="other-reason" />
+		<label for="flag-type-other">other...</label>
+
+		<div id="other-reason" class="hidden">
+			<label for="reason-text">Reason</label>
+			<textarea id="reason-text" name="reason"></textarea>
+		</div>
+		<label class="error"></label>
+		<input type="submit" value="Flag"/>
+	</form>
+</div>

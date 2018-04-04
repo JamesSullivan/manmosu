@@ -1,0 +1,63 @@
+@(user: Option[User], qa: models.QorA, host: String )(implicit messages: Messages, request: RequestHeader)
+@import java.net.URLEncoder
+		<div class="post-interactions">
+			<ul class="post-action-nav piped-nav nav">
+			  @if(qa.isQuestion){
+				<li class="nav-item">
+					<a class="post-action show-popup" href="#">@messages("share")</a>
+					<div class="popup share small">
+						<form class="validated-form digger">
+						    @helper.CSRF.formField
+							<label for="share-url">share a link for this question</label>
+							<input type="text" class="text-input required" id="share-url" value="@{if(request.secure){"https://"}else{"http://"}+request.host+request.uri}"/>
+						</form>
+						<a target="_blank" class="share-button" 
+							data-shareurl="https://twitter.com/share?text=Is this a good question?&url=@{if(request.secure)"https://"else"http://"}@request.host@request.uri">
+							<i class="icon-twitter-squared icon-almost-3x"></i>
+						</a>
+						<a target="_blank" class="share-button" 
+							data-shareurl="https://plus.google.com/share?&url=@{if(request.secure){"https://"}else{"http://"}+request.host+request.uri}">
+							<i class="icon-gplus-squared icon-almost-3x"></i>
+						</a>
+						<a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u&amp;src=sdkpreparse"><i class="icon-facebook-squared icon-almost-3x"></i>Facebook</a>
+						<a class="close-popup">@messages("popup.close")</a>
+					</div>
+				</li>
+			   }
+			   @if(user.isDefined){
+			    @if(user.get.userID==qa.authorsRow.id){
+				<li class="nav-item">
+					<a class="post-action edit@{if(qa.isQuestion){Html("-question")}} requires-login requires-karma" data-author="@{user.isDefined&&user.get.userID==qa.authorsRow.id}" data-karma="20" href="/@{qa.text}/edit/@qa.row.id">@messages("edit")</a>
+				</li>
+				}
+				<li class="nav-item">
+					<a href="#" data-author="@{user.isDefined&&user.get.userID==qa.authorsRow.id}" data-karma="10" data-modal-id="@{qa.text}-flag-modal@qa.row.id" class="post-action author-cant requires-login flag-it requires-karma">@messages("flag")</a>
+					@{flag(qa.text,qa.row.id)}
+				</li>
+				}
+			</ul>
+			<ul class="post-touchs">
+				<li class="touch author-touch">
+					<div class="complete-user">
+						<time class="when" itemprop="dateCreated" datetime="@{qa.row.createdat.getOrElse("")}">created @{qa.createdat}</time>
+						<a href="/users/@{qa.authorsRow.id}/@{qa.authorsRow.sluggedname}"><img border="0" class="user-image" src="@{utils.Photo.getPhoto(qa.authorsRow, 48, 48)}"/></a>
+						<div class="user-info" @{if(qa.isQuestion){Html("""itemscope itemtype="http://schema.org/Person" itemprop="author" """)}} >
+							<a class="user-name ellipsis"  href="/users/@{qa.authorsRow.id}/@{qa.authorsRow.sluggedname}">@{qa.authorsRow.name}</a>
+							<div title="@{messages("touch.karma.title")}" class="user-karma ellipsis">@{qa.authorsRow.karma} @messages("touch.karma.singular")</div>
+						</div>
+					</div>
+				</li>
+				<li class="touch edited-touch">
+					<div class="complete-user">
+						@if(qa.isQuestion){
+						<a href="/@qa.row.id/history">
+						}
+							<time class="when" itemprop="dateModified" datetime="@{qa.row.lastupdatedat.getOrElse("")}">@{messages("touch.edited")} @{qa.lastupdatedat}</time>
+						@if(qa.isQuestion){
+						</a>
+						}
+					</div>
+				</li>
+			</ul>
+		</div>
+

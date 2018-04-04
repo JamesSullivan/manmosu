@@ -1,0 +1,7 @@
+@(voteCount: Long, sluggedTitle: String, title: String )(implicit messages: Messages)
+	    <li class="ellipsis advanced-data-line">
+	    	<span class="counter">@voteCount</span> 
+			<a rel="nofollow" href="@sluggedTitle">
+				@title
+			</a>
+		</li>

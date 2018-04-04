@@ -1,0 +1,13 @@
+@(socialProviders: com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry)(implicit messages: Messages)
+    @if(socialProviders.providers.nonEmpty) {
+         <div class="social-providers col-md-10 col-md-offset-1">
+             <p>Or use your existing account on one of the following services to sign in:</p><br/>
+             <div>
+             @for(p <- socialProviders.providers) {
+                 <a href="@controllers.routes.SocialAuthController.authenticate(p.id)" class="provider @p.id" title="@messages(p.id)"><img src="@controllers.routes.Assets.at(s"imgs/providers/${p.id}.png")" width="64px" height="64px" alt="@messages(p.id)"></a>
+             }
+             </div>
+             <p></p>
+             <br />
+         </div>
+}

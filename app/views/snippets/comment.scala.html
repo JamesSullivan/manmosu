@@ -1,0 +1,47 @@
+@(userID: Long, questionId: Long, c: models.CommentUser)(implicit messages: Messages)
+@import utils.RelativeTime
+<li class="comment " id="comment-@c.row.id">
+	<div class="post-meta comment-meta vote-container">
+		<span class="vote-count comment-vote-count comment-meta-hidden">@c.row.votecount</span>
+		<a title="mark as a good comment"  class="comment-meta-hidden container comment-option author-cant requires-login vote-option icon-up-open @{if(c.voted)"voted"}" 
+			data-value="up" data-author="@(userID==c.row.authorId)" data-type="comment" data-id="@c.row.id">
+		</a>
+		<a title="flag" href="#" data-author="@(userID==c.row.authorId)"
+			data-modal-id="comment-flag-modal@c.row.id"
+			class="comment-meta-hidden container author-cant requires-login comment-option flag-it icon-flag"></a>
+	</div>
+	<div class="comment-container">
+		<span>
+			@Html(c.row.htmlcomment)
+		</span> &#8212;
+		<a class=""  href="/users/@{c.row.authorId}/@{c.authorsRow.sluggedname}">@c.authorsRow.name</a>&nbsp;@RelativeTime.format(c.row.lastupdatedat)
+		@if(userID == c.row.authorId){
+		<div class="simple-ajax-form">
+			<a class="requires-login requires-karma" data-author="true" href="#">@messages("edit")</a>
+			<div class="ajax-form hidden">
+				<form method="post" action="/comment/edit/@c.row.id" class="validated-form ajax" data-ajax-on-callback="replace" data-ajax-result="comment-@c.row.id">
+					<textarea class="comment-textarea required to-focus hintable text-input"
+						minlength="15" maxlength="600" name="comment"
+						data-hint-id="comment-@c.row.id-hint">@c.row.comment</textarea>
+					<input class="post-submit submit" type="submit" value="Ok" />
+					<input name="questionId" type="hidden" value="@questionId" />
+					<div class="comment-remaining-characters">@messages("comment.remaining_characters")<span class="comment-length-counter"> 600</span></div>
+					<button class="post-submit  submit cancel ">
+						@messages("cancel_button")
+					</button>
+					<label class="form-watch">
+						<input type="checkbox" name="watching" value="true" checked="checked"/> 
+							@messages("post.watch")
+					</label>
+				</form>
+				<div class="hint" id="comment-@c.row.id-hint">
+					@Html(messages("comment.hint"))
+				</div>
+			</div>
+		</div>
+		}	
+	</div>	
+</li>
+
+@{flag("comment",c.row.id)}
+

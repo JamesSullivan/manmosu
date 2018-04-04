@@ -1,0 +1,3 @@
+@(size: Int, singular: String, plural: String)(implicit messages: Messages)
+<span class="counter">@size</span>&nbsp;@if(size==1) {@messages(singular)} else {@messages(plural)}
+

@@ -1,0 +1,82 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+
+GET		/about                    		 				controllers.ApplicationController.about
+
+POST 	/answer/$id<[0-9]+>/comment						controllers.ApplicationController.comment(id: Long, qa: String = "answer")
+POST 	/question/$id<[0-9]+>/comment					controllers.ApplicationController.comment(id: Long, qa: String = "question")
+
+GET		/answer/edit/$answerId<[0-9]+>					controllers.ApplicationController.answer(answerId: Long)
+POST	/answer/edit/$answerId<[0-9]+>					controllers.ApplicationController.answered(answerId: Long)
+POST	/answer/$answerId<[0-9]+>/voto/:dir  			controllers.ApplicationController.answerVote(answerId: Long, dir: String)
+GET		/answer/$answerId<[0-9]+>						controllers.ApplicationController.answer(answerId: Long)
+POST	/answer/$answerId<[0-9]+>						controllers.ApplicationController.answered(answerId: Long)
+POST	/mark-as-solution/$answerId<[0-9]+>				controllers.ApplicationController.solution(answerId: Long)
+
+GET		/attachments/$attachmentsId<[0-9]+>				controllers.AttachmentController.displayFile(attachmentsId: Long)
+GET		/remove/$qId<[0-9]+>/$attachmentsId<[0-9]+>		controllers.AttachmentController.removeFile(qId: Long, attachmentsId: Long)
+POST    /upload  										controllers.AttachmentController.upload
+
+POST    /ask                    		 				controllers.QuestionController.asked
+GET     /ask                    		 				controllers.QuestionController.ask(questionId: Long ?= 0)
+
+POST	/comment/edit/$commentId<[0-9]+>				controllers.ApplicationController.comment(commentId: Long, about: String="comment")
+POST	/comment/$number<[0-9]+>/voto/:dir  			controllers.ApplicationController.commentVote(number: Long, dir: String)
+POST	/comment/$commentId<[0-9]+>/mark				controllers.ApplicationController.mark(commentId: Long)
+
+POST	/question/$questionId<[0-9]+>/mark				controllers.ApplicationController.mark(questionId: Long)
+GET		/question/edit/$questionId<[0-9]+>				controllers.QuestionController.ask(questionId: Long)
+GET		/question/searchTags/:tag		 				controllers.ApplicationController.searchTags(tag: String)
+GET		/questionSuggestion	 			 				controllers.QuestionController.questionSuggestion(query: String, limit: Long ?= 3)
+POST	/question/$number<[0-9]+>/voto/:dir  			controllers.QuestionController.questionVote(number: Long, dir: String)
+POST	/question/watched/$number<[0-9]+>				controllers.ApplicationController.watched(number: Long)
+
+GET     /authenticate/:provider          				controllers.SocialAuthController.authenticate(provider)
+POST    /authenticate/credentials        				controllers.CredentialsAuthController.authenticate
+
+GET     /account/email/:email            				controllers.ActivateAccountController.send(email: String)
+GET     /account/activate/:token         				controllers.ActivateAccountController.activate(token: Long)
+
+GET		/search					 						controllers.ApplicationController.index(sort="search", query: String ?= "", p: Long ?= 1)
+
+GET     /signIn                          				controllers.SignInController.signIn(path = "")
+GET     /login                           				controllers.SignInController.signIn(path = "")
+GET     /signIn/                         				controllers.SignInController.signIn(path = "")
+GET     /signIn/*path                    				controllers.SignInController.signIn(path)
+GET     /signOut                         				controllers.SignInController.signOut
+GET     /createnewids		     		 				controllers.SignUpController.view
+GET     /signUp                          				controllers.SignUpController.view
+POST    /signUp                          				controllers.SignUpController.submit
+
+GET     /unanswered                      				controllers.ApplicationController.index(sort="unanswered", query: String ?= "", p: Long ?= 1)
+GET     /unsolved                        				controllers.ApplicationController.index(sort="unsolved", query: String ?= "", p: Long ?= 1)
+
+GET		/$questionId<[0-9]+>/history	 				controllers.ApplicationController.history(questionId: Long)
+GET     /$questionId<[0-9]+>-:title      				controllers.QuestionController.question(questionId: Long, title: String)
+GET     /                                				controllers.ApplicationController.index(sort="", query: String ?= "", p: Long ?= 1)
+
+GET     /top/:sort                       				controllers.ApplicationController.index(sort: String, query: String ?= "", p: Long ?= 1)
+GET		/ranking						 				controllers.ApplicationController.ranking(ranking="", p: Long ?= 1)
+GET		/ranking/:tag				  	 				controllers.ApplicationController.rankingTag(tag: String)
+GET		/tag/:tag						 				controllers.ApplicationController.tag(tag: String, p: Long ?= 1)
+GET     /usage-terms                     				controllers.ApplicationController.usageTerms
+
+GET		/users/delete/$number<[0-9]+>		 			controllers.UsersController.usersDelete(number: Long)
+GET		/users/edit/$number<[0-9]+>		 				controllers.UsersController.usersEdit(number: Long)
+POST	/users/edit/$number<[0-9]+>		 				controllers.UsersController.usersEdited(number: Long)
+GET		/users/$number<[0-9]+>/postsByType/:field		controllers.UsersController.usersPostsByType(number: Long, field: String, p: Long ?= 1, order: String ?= "ByVotes" )
+GET		/users/$number<[0-9]+>/:name/reputation  		controllers.UsersController.usersReputation(number: Long, name: String)
+GET		/users/$number<[0-9]+>/:name	 				controllers.UsersController.users(number: Long, name: String)
+
+GET     /password/forgot                 				controllers.ForgotPasswordController.view
+POST    /password/forgot                 				controllers.ForgotPasswordController.submit
+GET     /password/reset/:token           				controllers.ResetPasswordController.view(token: Long)
+POST    /password/reset/:token           				controllers.ResetPasswordController.submit(token: Long)
+GET     /password/change                 				controllers.ChangePasswordController.view
+POST    /password/change                 				controllers.ChangePasswordController.submit
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file                    				controllers.Assets.at(path="/public", file)

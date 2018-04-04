@@ -1,0 +1,23 @@
+@import play.api.data.Form
+@import play.api.i18n.Messages
+@import play.api.mvc.RequestHeader
+@import forms.SignUpForm.Data
+@import helper._
+
+@(signUpForm: Form[Data], user: models.User, socialProviders: com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry)(implicit request: RequestHeader, messages: Messages, messagesProvider: MessagesProvider)
+@main(messages("site.name")+" - "+messages("metas.signup.title")) {
+    <h2 class="title page-title subheader">@messages("signup.link")</h2>
+        @helper.form(action = routes.SignUpController.submit(), args = 'id -> "SignUpForm", 'name -> "SignUpForm") {
+            @helper.CSRF.formField
+			@helper.inputText(signUpForm("name"), '_label -> messages("signup.form.username.label"), 'class -> "text-input", '_showConstraints -> false)<br/>
+			@helper.inputText(signUpForm("email"),'_label -> messages("signup.form.email.label"), 'class -> "required text-input form-control", '_showConstraints -> false)
+			<br/>
+			@helper.inputPassword(signUpForm("password"), '_label -> messages("signup.form.password.label"), 'class -> "required text-input form-control", '_showConstraints -> false)
+			<br/><br/>
+			<span>@messages("signup.form.usage_terms.text") <a href="/usage-terms">@messages("signup.form.usage_terms.link_content")</a></span><br/><br/>
+            <input class="post-submit big-submit submit" type="submit" id="submit"  value="submit"/>
+        }
+        @snippets.sociallogins(socialProviders)
+}
+
+

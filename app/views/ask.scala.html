@@ -1,0 +1,127 @@
+@(askForm: Form[models.Ask], attachments: Seq[models.daos.slick.Tables.AttachmentRow], user: User, config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
+@import models.daos.slick.QA
+@import play.api.Play
+@import play.api.Play.current
+@import utils.RelativeTime
+@import views.html.snippets._
+@main(messages("metas.default.description",messages("site.name") + " - " + messages("metas.question.title")), Some(user)) {
+<form class="validated-form question-form form-with-upload hinted-form" action='/ask' method="post" autocomplete="off">
+	@helper.CSRF.formField
+	
+	@helper.inputText(askForm("title"), '_label -> messages("question.title.label"), 'class -> "required hintable text-input question-title-input ignore", 
+		'datahintid->"question-title-hint", 'minlength->"15", 'maxlength->"150", 'placeholder->messages("question.title.placeholder"),
+		'onfocus->"setHints(this);", '_showConstraints -> false, 'type->"text")
+		<div id="question-suggestions" class="hidden">
+			<h2 class="title section-title">@messages("question.similars")</h2>
+			<ul class="suggested-questions-list"></ul>
+		</div>
+		<script src="/assets/js/question-suggestions.js"></script>
+		<div class="wmd">
+			<div class="wmd-panel">
+				<div id="wmd-button-bar"></div>
+				<img id="image-editor-preview" alt="Preview" style="display: none">
+			     @helper.textarea(askForm("description"),'id-> "wmd-input", '_label -> "", 
+			     	'class -> "required description-input hintable wmd-input",
+			     	'datahintid->"question-description-hint", 'minlength->"15", 'maxlength->"50000", 'onfocus->"setHints(this);",
+			     	'placeholder->messages("question.description.placeholder"), '_showConstraints -> false)
+			     	<br/>
+			</div>
+			<div id="wmd-preview" class="md-panel md-preview"></div>
+		</div>
+		@attachmentsavailable(QA.QUESTION, askForm("questionId").value.getOrElse("0").toLong, attachments, true)
+	    <div>
+	    	<label style="display: inline-block;">@messages("question.attachments.choose")&nbsp;</label>
+			<a id="uploadclear" class="hidden" onclick="$('#files').replaceWith( $('#files').val('').clone( true ));document.getElementById('list').innerHTML = '';document.getElementById('files').addEventListener('change', handleFileSelect, false);" class="cancel-upload">@messages("cancel_button")</a>
+			<input form="uploadForm" width="60" type="file" id="files" name="files[]" multiple />
+			<output id="list"></output>
+		</div>
+		<br/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.js"></script>
+	<label for="tags">Tags</label>
+			   
+	<ul class="tags autocompleted-tags complete-tags hidden" id="newquestion-tags-autocomplete"></ul>
+  	<select id="tags" type="text" autocomplete="off" name="tags[]"
+		   multiple="multiple"
+		   class="form-control "
+		   datahintid="question-tags-hint"
+		   data-autocomplete-id="newquestion-tags-autocomplete"
+		   style="width:100%">
+	</select>
+	@{if(askForm.hasErrors)tagit(List[String]()) else tagit(askForm.get.tags)}
+    <br/>
+    <p>&nbsp;</p>
+	@{val edit = (askForm("questionId").value.getOrElse("0")!="0")
+	  val showInput = if(edit) "text" else "hidden"
+	  val showLabel = if(edit) messages("edit_form.comment.label") else ""
+		helper.inputText(askForm("comment"), '_label -> showLabel, 'class -> "hintable text-input required", 
+		'datahintid->"question-comment-hint", 'minlength->"5", 'maxlength->"250", 
+		'placeholder->messages("edit_form.comment.placeholder"), 'onfocus->"setHints(this);",
+		'_showConstraints -> false, 'type->showInput, '_showErrors -> edit)
+    }
+    @{helper.inputText(askForm("markedDescription"), '_label -> "", 'class -> "text-input", 'type->"hidden", '_showErrors -> false)}
+    @{val showButton = if(askForm("questionId").value.getOrElse("0")!="0") messages("question.edit_form.submit") else messages("question.new_form.submit")
+      Html("""<input class="post-submit big-submit" onclick="callUpload(); $('input#markedDescription').val(document.getElementById('wmd-preview').innerHTML);" type="submit" value="""+"\""+showButton+"\""+"""/><br/>""")
+      }
+    @{val edit = (askForm("questionId").value.getOrElse("0")!="0")
+      val showInput = if(edit) "display:none" else ""
+    }
+	<p>&nbsp;</p>
+	<label style="display: inline-block;"><input id="watching" name="watching" value="true" checked="@{askForm("watching").value}" class="ignore" type="checkbox">@messages("post.watch")</label>
+
+	@helper.inputText(askForm("questionId"), '_label -> "", 'type->"hidden", '_showConstraints -> false, '_showErrors -> false)
+</form>
+<form method="post" id="uploadForm" enctype="multipart/form-data">@helper.CSRF.formField</form>
+<script src="/assets/js/attachments.js"></script>
+<script src="/assets/js/deps/Markdown.Converter.js"></script>
+<script src="/assets/js/deps/Markdown.Editor.js"></script>
+<script src="/assets/js/deps/Markdown.Sanitizer.js"></script>
+
+<div class="form-hints">
+	<div id="question-title-hint" class="hint" style="display: block;" >@Html(messages("question.title.hint", "about#faq"))</div>
+	<div id="question-description-hint" class="hint">@Html(messages("question.description.hint"))</div>
+	<div id="question-tags-hint" class="hint">@Html(messages("question.tags.hint"))</div>
+	<div id="question-comment-hint" class="hint">@Html(messages("edit_form.comment.hint"))</div>
+</div>
+<script src="/assets/js/hopscotch.js"></script>
+<script type="text/javascript">
+    var tour = {
+      id: "hello-hopscotch",
+      steps: [
+        {
+          title: "Title",
+          content: "@messages("intro.new_question.title")",
+          target: "title",
+          placement: "top"
+        },
+       {
+          title: "Details",
+          content: "@messages("intro.new_question.description")",
+          target: "wmd-input",
+          placement: "bottom"
+        },
+        {
+          title: "Tags",
+          content: "@messages("intro.new_question.tags")",
+          target: "tags",
+          placement: "bottom"
+        },
+        {
+          title: "About",
+          content: "@messages("intro.about")",
+          target: "about",
+          placement: "bottom"
+        }
+      ]
+    };
+</script>
+<script src="/assets/js/form-hints.js"></script>
+<script type="text/javascript">
+    (function () {
+        var converter1 = new Markdown.Converter();
+        var editor1 = new Markdown.Editor(converter1);
+        editor1.run();  
+    })();
+</script>
+
+}

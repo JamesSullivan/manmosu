@@ -1,0 +1,682 @@
+@(user: Option[User], q: QuestionUser, answers: Seq[AnswerUser], recentTags: Seq[models.daos.slick.Tables.TagxRow],  relevant: String, config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
+@import play.api.Play
+@import play.api.Play.current
+@import views.html.snippets._
+@import play.filters.csrf._
+@import play.filters.csrf.CSRF.Token
+@main(messages("metas.default.description",messages("site.name")), user) {
+@helper.CSRF.formField
+@if(user.isEmpty){@aboutbanner(messages)}
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.11&appId=1680728182199776&autoLogAppEvents=1';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<section class="first-content content">
+@if(user.isDefined){
+  @if(user.get.userID==q.row.authorId.getOrElse(0L)){
+	<p class = "banner-mark-as-solution">@messages("question.banner.remember")</p>
+  }		
+  @if(user.get.userID!=q.row.authorId.getOrElse(0L) && user.get.karma < 50){
+	<p class = "banner-mark-as-solution">@messages("question.banner.upvote")</p>
+  }
+}
+  <section itemscope itemtype="http://schema.org/Article" class="post-area question-area " >
+	<h1 itemprop="name" class="title subheader main-thread-title question-title">@q.informationRow.title</h1>
+	<div class="post-meta">
+    @votecontainer(q, user.isDefined&&user.get.userID==q.row.authorId.getOrElse(0L), user.isDefined&&user.get.userID==q.row.authorId.getOrElse(0L), q.row.solutionId, q.watching, config)
+	</div>
+	
+	<div class="post-container">
+		<div itemprop="articleBody" class="post-text question-description" id="question-description-@q.row.id">
+			<p>@{Html(q.informationRow.markeddescription.getOrElse(""))}</p>
+		</div>
+		<ul class="tags" itemprop="keywords">
+		@for(t<-q.tags){
+			<li class="tags-item">
+				<a href="/tag/@{t.tagxRow.name}" class="tag-brutal">@{t.tagxRow.name}</a>
+			</li>
+		}
+		</ul>
+		@postinteraction(user, q, request.host)
+		@{val uId = if(user.isEmpty) 0 else user.get.userID; comments(uId, q.row.id, q.row.id, "Question", q.comments)}
+		</div>
+		@attachmentsavailable(models.daos.slick.QA.QUESTION, q.row.id, q.attachments, false)
+	</section>
+	<script src="/assets/js/hopscotch.js"></script>
+<script type="text/javascript">
+    var tour = {
+      id: "hello-hopscotch",
+      steps: [
+        {
+          title: "Voting",
+          content: "@messages("intro.question.post_meta")",
+          target: document.querySelector(".vote-container:first-child"),
+          placement: "top"
+        },
+       {
+          title: "Editing",
+          content: "@messages("intro.question.edit_question")",
+          target: document.querySelector(".edit-question:first-child"),
+          placement: "top"
+        },
+        {
+          title: "Commenting",
+          content: "@messages("intro.question.add_comment")",
+          target: document.querySelector(".add-comment:first-child"),
+          placement: "bottom"
+        },
+        {
+          title: "Solutions",
+          content: "@messages("intro.question.solution_mark")",
+          target: document.querySelector(".mark-as-solution:first-child"),
+          placement: "top"
+        },
+        {
+          title: "About",
+          content: "@messages("intro.about")",
+          target: "about",
+          placement: "bottom"
+        }
+      ]
+    };
+</script>
+	<div class="subheader">
+		<h2 class="title page-title">@answers.size 
+		@if(answers.size == 1){
+			@messages("question.list.answer.singular")
+		}else{
+		    @messages("question.list.answer.plural")
+		}
+		</h2>
+	</div>
+	<ul>
+		@for(a <- answers){
+		<li id="answer-@a.row.id" class="answer" data-id="@a.row.id">	
+			<section class="post-area ">
+				<div class="post-meta">
+    			@votecontainer(a, user.isDefined&&user.get.userID==q.row.authorId.getOrElse(0L), (user.isDefined&&user.get.userID==a.row.authorId.getOrElse(0L)), q.row.solutionId, q.watching, config )
+				</div>
+				<div class="post-container">
+			<div class="post-text" id="answer-@a.row.id">@Html(a.informationRow.markeddescription.getOrElse(""))</div>
+			@postinteraction(user, a, request.host)
+			@{val uId = if(user.isEmpty) 0 else user.get.userID; comments(uId, q.row.id, a.row.id, "Answer", a.comments)}
+			@attachmentsavailable(models.daos.slick.QA.ANSWER, a.row.id, a.attachments, false)
+				</div>
+			</section>
+		</li>
+		}			
+	</ul>
+	@if(user.isDefined){
+	  @if(answers.exists(a => a.row.authorId.getOrElse(0L)==user.get.userID)){
+	  <div class="message alert already-answered">
+		@messages("answer.errors.already_answered")
+	  </div>
+	  } 
+	  @if(user.get.userID==q.row.authorId.getOrElse(0L)&&user.get.karma<config.get[Long]("permission.rule.answer_own_question")){
+	  <div class="message alert not-enough-karma">
+	  	@Html(messages("answer.errors.not_enough_karma.own_question", "about", "ask"))
+	  </div>
+	  }
+	  @if(user.get.userID!=q.row.authorId.getOrElse(0L)||user.get.karma>config.get[Long]("permission.rule.answer_own_question")){
+	    @if(!answers.map(_.authorsRow.id).exists(authorId => authorId == user.get.userID)){
+	  	  @answerform(q.row.id, forms.AnswerForm.blankForm(q.row.id), Seq[models.daos.slick.Tables.AttachmentRow](), user.get, config)
+	    }
+	  }
+	}
+<section class="notice">
+	<h3 class="title">
+		@Html(messages("notice.logged",(for(t<-q.tags) yield{s"""<a href="/tag/${t.tagxRow.name}" class="tag-brutal">${t.tagxRow.name}</a>"""}).mkString(" "), "ask"))
+	</h3>
+</section>
+</section>
+<aside class="sidebar">
+@recenttags(recentTags)
+<div class="subheader">
+	<h3 class="title page-title">Related questions</h3>
+</div>
+@Html(relevant)
+</aside>
+<script type="text/javascript">
+	//UI flags (GLOBAL VARIABLES)
+	var Globals = {};
+	Globals.inHouseUploading = true;
+	Globals.linkTo = {};
+	Globals.linkTo.uploadAttachment = "/attachments/upload";
+	Globals.linkTo.getAttachment = "/attachments/";
+	Globals.linkTo.deleteAttachment = "/attachments/";
+
+	var ANYONE_CAN_CREATE_TAGS = true;
+	var TAGS_SPLITTER_CHAR = ",";
+	var LOGGED_IN = @{user.isDefined};
+	var MODERATOR = false;
+	var KARMA = @{if(user.isDefined){user.get.karma}else{0}};
+	var CONTEXT_PATH = "";
+	var AVIARY_API_KEY = "Your aviary api key(http://www.aviary.com/web-key)";
+	var INK_API_KEY = "Your ink api key(https://developers.inkfilepicker.com/register/)";
+	var ALL_TAGS_URL = "/question/allTags";
+	var MESSAGES_LOADER_URL = "/messages/loadAll";
+</script>
+<script type="text/javascript">
+function errorPopup(text, target, clazz){
+	clazz = clazz || "";
+	if(!$(".validation-error.popup").is(":visible")) {
+		var errorPopup = $("<div class='"+ clazz +" validation-error popup close-popup'><div class='popup-error-message'>"+text+"</div><div class='subtitle'>(@messages("button_hint.click_to_close"))</div></div>");
+		errorPopup.insertAfter(target).show();
+	}
+	setTimeout(function(){
+		errorPopup.fadeOut(200, "linear", function(){errorPopup.remove();});
+	},1500);
+}
+</script>
+<script src="/assets/js/about-banner.js"></script>
+<script src="/assets/js/button-hints.js"></script>
+<!--                    flag-it.js is below -->
+<script src="/assets/js/form-fix.js"></script>
+<script src="/assets/js/form-helper.js"></script>
+<!--                    form-validation.js is below -->
+<!--                    links-behaviour.js is below -->
+<script src="/assets/js/mark-as-solution.js"></script>
+<script src="/assets/js/form-markdown.js"></script>
+<script src="/assets/js/modal.js"></script>
+<script src="/assets/js/more-comments.js"></script>
+<script src="/assets/js/popup.js"></script>
+<script src="/assets/js/share.js"></script>
+<!--  <script src="/assets/js/simple-ajax-form.js"></script>  -->
+<script src="/assets/js/deps/Markdown.Converter.js"></script>
+<script src="/assets/js/deps/Markdown.Editor.js"></script>
+<script src="/assets/js/deps/Markdown.Sanitizer.js"></script>
+<script src="/assets/js/deps/marked.js"></script>
+<!--  
+<script type="text/javascript">
+    (function () {
+        var converter1 = new Markdown.Converter();
+        var editor1 = new Markdown.Editor(converter1);
+        editor1.run();  
+    })();
+</script> -->
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@@1.17.0/dist/jquery.validate.js"></script>
+<script type="text/javascript">
+$(function() {
+	bindAll();
+
+	function bindAll(){
+		bind($(".simple-ajax-form a"), "click", showForm);
+		bind($(".simple-ajax-form .cancel"), "click", hideForm);
+		bind($('form.ajax'), "submit", submitForm);
+	}
+
+	function bind(element, event ,callback){
+		element.off(event, callback);
+		element.on(event, callback);
+	}
+	
+	function showForm(e) {
+		e.preventDefault();
+		var formArea = $(this).siblings(".ajax-form");
+		formArea.toggleClass("hidden");
+		formArea.find(".to-focus").focus();
+		commentLengthCounter(formArea.find('form textarea'));
+	}
+	
+	function hideForm(e){
+		e.preventDefault();
+		var form = $(this).closest("form.ajax");
+		resetForm(form, true);
+	}
+	
+	function submitForm(e) {
+		e.preventDefault();
+		executeAjax($(this));
+	}
+	
+	function resetForm(form, cancelPressed){
+		var formParent = form.parent();
+		form.removeClass("inactive");
+		form.find("input[type='submit']").attr("disabled", false);
+		formParent.addClass("hidden");
+		if(!cancelPressed)
+			form.find(".comment-textarea").val("");
+	}
+	
+	function executeAjax(form){
+		if (!form.valid()) 
+			return;
+
+		form.find(".submit").attr("disabled", true);
+		form.find(".cancel").attr("disabled", false);
+		
+		var error = function(jqXHR) {
+			resetForm(form, false);
+			if (jqXHR.status == 400) {
+				errorPopup('@messages("error.occured")', form.parent(), "center-popup");
+				return;
+			}
+			errorPopup('@messages("error.occured")', form.parent(), "center-popup");
+			console.log(jqXHR);
+		};
+	
+		var success = function(response, status, jqhr) {
+			var target = $("#" + form.data("ajax-result"));
+			console.log("form.data(ajax-result): " + form.data("ajax-result"));
+			var action = form.data("ajax-on-callback") || "replace-inner";
+			console.log("action: " + action);
+			if (action == "replace-inner") {
+				target.html(response);
+			} else if(action == "append") {
+			    console.log("appending")
+			    target.append(response);
+			} else if(action == "replace"){
+				target.replaceWith(response);
+			}
+			target.removeClass("hidden");
+			
+			resetForm(form, false);
+			bindAll();
+		};
+		
+	    var token =  $('input[name="csrfToken"]').attr('value')
+		var uri = form.attr("action");
+		$.ajax(uri, {
+			success: success,
+			error: error,
+			dataType : 'html',
+			data : form.serialize(),
+			method: "POST",
+			beforeSend: function(xhr) {
+		    	xhr.setRequestHeader('Accept','application/json; charset=utf-8');
+            	xhr.setRequestHeader('Csrf-Token', token);
+        	}
+		});
+	}
+});
+</script>
+<script type="text/javascript">
+$(function(){
+     $(document).ready(function() {
+		jQuery.extend(jQuery.validator.messages, {
+		    required: '@messages("org.hibernate.validator.constraints.NotEmpty.message")',
+		    email: '@messages("org.hibernate.validator.constraints.Email.message")',
+		    equalTo: jQuery.validator.format('@messages("validator.not.equal")'),
+		    minlength: jQuery.validator.format('@messages("validator.minimum.characters")'),
+		    maxlength: jQuery.validator.format('@messages("validator.maximum.characters")'),
+		});
+		
+	})
+
+	$.validator.setDefaults({
+		onkeyup: function(input){
+			setTimeout(function(){
+				$(input).valid();
+			}, 2000)
+		}
+		
+	})
+	
+	$.validator.addMethod(
+	    "date",
+	    function(value, element) {
+		if(value.trim().length == 0){
+			return true;
+		}
+
+		var dateFormat = $(element).data('dateformat');
+		if(dateFormat.length == 0){
+			return true;
+		}
+
+		var dayPattern = '(0[1-9]|[12][0-9]|3[01])';
+		var monthPattern = '(0[1-9]|1[0-2])';
+		var yearPattern = '(19[1-9][0-9]|20[012][0-9])';
+
+		/* first escape characters which have a special meaning in regex (= make them literals): */
+		var datePattern = '^' + dateFormat.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&") + '$';
+
+		/* then convert the joda date format into regex: */
+		datePattern = datePattern.replace(/dd/i, dayPattern);
+		datePattern = datePattern.replace(/mm/i, monthPattern);
+		datePattern = datePattern.replace(/yyyy/i, yearPattern);
+
+		return value.match(new RegExp(datePattern));
+	    },
+	    '@messages("validator.invalid.date")'
+	);
+	
+	$.validator.addMethod(
+			"brutal-url",
+			function(value, element) {
+				if(value.length == 0){
+					return true
+				}
+				return value.match(/(www\.)?(.*\.)(.*)/);
+			},
+			'@messages("validator.invalid.url")'
+	);
+
+	
+	$(".validated-form").each(function(){
+		$(this).find("input").addClass("ignore");
+	});
+	
+	$(".validated-form").each(function(i,f){
+		$(f).validate({
+			rules:{
+				"passwordConfirmation":{equalTo:"#password"},
+			}
+		});
+	});
+});
+</script>
+
+
+<script type="text/javascript">
+$(function() {
+	$('.requires-karma').each(function(index, element) {
+		var element = $(element);
+		var authorCan = !element.hasClass("author-cant");
+		var required = parseInt(element.data("karma"));
+		var isAuthor = element.data("author");
+		isAuthor = isAuthor == undefined ? false : isAuthor;
+		if (authorCan && isAuthor) {
+			return;
+		}
+		if(!MODERATOR && required > KARMA) {
+			element.off('click');
+			element.click(function(e) {
+				e.preventDefault();
+				errorPopup('@messages("need.to_have")' + " " + required + " " + '@messages("reputation_score")' + "!", this);
+			});
+		}
+	});
+	$('.author-cant').each(function(index, element) {
+		var element = $(element);
+		var isAuthor = element.data("author");
+		if(isAuthor) {
+			element.off('click');
+			element.click(function(e) {
+				e.preventDefault();
+				errorPopup('@messages("error.author.cant_realize_operation")', this);
+			});
+		}
+	});
+	if(!LOGGED_IN) {
+		$('.requires-login').off('click');
+		$('.requires-login').bind("click", function(e) {
+			e.preventDefault();
+			errorPopup('@messages("auth.requires_login")', this);
+		});
+	}
+	$('.iframe-load').click(function() {
+		var link = $(this);
+		var iframe = $("<iframe/>");
+		iframe.attr("src", link.attr("href"));
+		link.parent().html(iframe);
+	});
+	
+});
+</script>
+<script type="text/javascript">
+$(function(){
+	$(".watch").on('click', watch);
+	
+	function watch(event){
+	  if(LOGGED_IN != true) {window.location.replace("/signIn");}
+  
+		event.preventDefault();
+		var post = $(this);
+		var icon = post.find("span")
+		
+		var token =  $('input[name="csrfToken"]').attr('value')
+		
+		$.ajax({
+			url:post.attr("href"),
+			method: "POST",
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader('Csrf-Token', token);
+				toggleClassOf(icon);
+			},
+			error: function(jqXHR) {
+				errorPopup('@messages("error.occured")', post, "center-popup");
+				console.log(jqXHR);
+			}
+		});
+		
+		function toggleClassOf(icon){
+			icon.toggleClass("icon-muted");
+			icon.toggleClass("icon-eye-off");
+			icon.toggleClass("icon-eye");
+			
+			if(icon.hasClass("icon-muted")) {
+				icon.attr("title", '@messages("validation.follow_post")');
+			} else {
+				icon.attr("title", '@messages("validation.cancel_follow_post")');
+			}
+		}
+	}
+});
+</script>
+<script type="text/javascript">
+$(".vote-option").bind("click", function() {
+	if(!$(this).hasClass("stop")) {
+		if (!$(this).hasClass("voted")) {
+			$(this).addClass("stop");
+			vote($(this));
+		}
+		else if ($(this).hasClass("voted")) {
+			$(this).addClass("stop");
+			removeVote($(this));
+		}
+	}
+	
+});
+
+function vote(link) {
+  if(LOGGED_IN != true) {
+    	window.location.replace("/signIn")
+  } else {
+	var vote = link.data("value");
+	var type = link.data("type");
+	var id = link.data("id");
+	var params = "/"+ type +"/"+ id +"/voto/"+ vote;
+
+	fakeUpdateIncrement(link, vote);
+	
+	var token =  $('input[name="csrfToken"]').attr('value')
+	
+	$.ajax(""+ params, {
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader('Accept','application/json; charset=utf-8');
+            xhr.setRequestHeader('Csrf-Token', token);
+        },
+		complete: function(jqXHR, textStatus) {
+			if (jqXHR.status == "200") {
+				var count = jqXHR.responseText;
+				voteSuccess(link, count);
+			} else if (jqXHR.status == "409") {
+				errorPopup('@messages("vote.ownquestion")', link);
+			} else if (jqXHR.status == "403") {
+				errorPopup(jqXHR.responseText, link);
+			} else {
+				errorPopup('@messages("error.occured")', link);
+				console.log(jqXHR);
+			}
+			$(".vote-option").removeClass("stop");
+		},
+		accepts: "application/json",
+		method: "POST"
+	});
+  }
+}
+
+function removeVote(link) {
+  if(LOGGED_IN != true) {
+    	window.location.replace("/signIn")
+  } else {
+    var post = $(this);
+	var vote = link.data("value");
+	var type = link.data("type");
+	var id = link.data("id");
+	var params = "/"+ type +"/"+ id +"/voto/"+ vote;
+	
+	fakeUpdateDecrement(link, vote);
+	
+	var token =  $('input[name="csrfToken"]').attr('value')
+	
+	
+	$.ajax(""+ params, {
+		url:post.attr("href"),
+		method: "POST",
+		beforeSend: function(xhr) {
+		    xhr.setRequestHeader('Accept','application/json; charset=utf-8');
+            xhr.setRequestHeader('Csrf-Token', token);
+        },
+		complete: function(jqXHR, textStatus) {
+			if (jqXHR.status == "200") {
+				var count = jqXHR.responseText;
+				voteRemovalSuccess(link, count);
+			} else if (jqXHR.status == "409") {
+				errorPopup('@messages("vote.ownquestion")', link);
+			} else if (jqXHR.status == "403") {
+				errorPopup(jqXHR.responseText, link);
+			} else {
+				errorPopup('@messages("error.occured")', link);
+				console.log(jqXHR);
+			}
+			$(".vote-option").removeClass("stop");
+		},
+		accepts: "application/json"
+	});
+  }
+}
+
+function highlight(link) {
+	link.addClass("voted").siblings().removeClass("voted");
+}
+
+function removeHighlight(link) {
+	link.removeClass("voted").siblings().removeClass("voted");
+}
+
+function updateCount(link, count) {
+	var voteCount = $(link).closest(".vote-container").find(".vote-count");
+	voteCount.text(count);
+}
+
+function fakeUpdateIncrement(link, vote) {
+	var value;
+	var countWithoutAjax = parseInt($(link).closest(".vote-container").find(".vote-count").html());
+	
+	if(vote == "up") value = countWithoutAjax + 1;
+	else value = countWithoutAjax - 1;
+	
+	voteSuccess(link, value);
+}
+
+function fakeUpdateDecrement(link, vote) {
+	var value;
+	var countWithoutAjax = parseInt($(link).closest(".vote-container").find(".vote-count").html());
+	
+	if(vote == "up") value = countWithoutAjax - 1;
+	else value = countWithoutAjax + 1;
+	
+	voteRemovalSuccess(link, value);
+}
+
+
+function voteSuccess(link, count) {
+	highlight(link);
+	updateCount(link, count);
+}
+
+function voteRemovalSuccess(link, count) {
+	removeHighlight(link);
+	updateCount(link, count);
+}
+
+$(".flag-it").click(function(e) {
+	e.preventDefault();
+	var link = $(this);
+	var commentOptions = link.parent();
+	var comment = link.parents('.comment');
+	var modal = new Modal($("#" + link.data("modal-id")));
+	var form = modal.element.find("form");
+	var uri = form.attr("action");
+
+	link.toggleClass('selected');
+	comment.toggleClass('to-flag');
+
+	var callbacks = {};
+	callbacks["409"] = function() {
+		errorPopup("@messages("error.cant_do")", modal.element, "center-popup");
+	};
+	callbacks["400"] = function() {
+		errorPopup("@messages("hint.choose_an_option")", modal.element, "center-popup");
+	};
+	callbacks["403"] = function() {
+		errorPopup("@messages("auth.requires_login")", modal.element, "center-popup");
+	};
+	callbacks["200"] = function() {
+		modal.hide(200);
+		link.remove();
+	};
+	
+	var errors = form.find(".error");
+	
+	form.change(function(){
+		errors.text("");
+	});
+    
+    var token =  $('input[name="csrfToken"]').attr('value')
+    	
+	form.submit(function(e) {
+		e.preventDefault();
+		var checked = form.find("input:radio:checked");
+		if (isEmpty(checked)) {
+			errors.text("@messages("hint.choose_a_reason")").show();
+			return;
+		}
+		reason = form.find("textarea");
+		if (checked.val() == "OTHER" && isEmpty(reason.val())) {
+			errors.text("@messages("hint.describe_reason")").show();
+			return;
+		}
+		
+		$.ajax(uri, {
+			beforeSend: function(xhr) {
+	            xhr.setRequestHeader('Csrf-Token', token);
+	        },
+			complete : function(xhr, textStatus) {
+				if (callbacks[xhr.status] != undefined) {
+					callbacks[xhr.status].call();
+				} else {
+					errorPopup("@messages("error.occured")", modal, "center-popup");
+					console.log(xhr);
+				}
+			},
+			data : form.serialize(),
+			headers : {
+				Accept : "application/json"
+			},
+			method : "POST"
+		});
+	});
+
+});
+
+$(".other-option").change(function() {
+	var self = $(this);
+	self.siblings("#other-reason").show(200);
+});
+
+$(".modal input:not(.other-option)").change(function() {
+	$(".modal #other-reason").hide();
+});
+
+function isEmpty(el) {
+	return el.length == 0;
+}
+</script>
+}

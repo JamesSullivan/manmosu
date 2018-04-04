@@ -1,0 +1,51 @@
+@(total: Int, perpage: Int)(implicit messages: Messages)
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.1/jquery.twbsPagination.min.js"></script>
+<script type="text/javascript">
+(function($) {
+    $.QueryString = (function(paramsArray) {
+        let params = {};
+        for (let i = 0; i < paramsArray.length; ++i)
+        {
+            let param = paramsArray[i]
+                .split('=', 2);
+            if (param.length !== 2)
+                continue;
+            params[param[0]] = decodeURIComponent(param[1].replace(/\+/g, " "));
+        }
+        return params;
+    })(window.location.search.substr(1).split('&'))
+})(jQuery);
+
+    var url = new URL(window.location.href)
+    var baseurl = [location.protocol, '//', location.host, location.pathname].join('');
+	let params = (url).searchParams
+	var page = params.get('p');
+	if(!page) {
+	    params.set('p', 1)
+	    page = "1"
+	}
+	var intPage = parseInt(page)
+    $(function () {
+        window.pagObj = $('#pagination').twbsPagination({
+	    	startPage: intPage,
+	        totalPages: @{Math.ceil(total.toDouble/perpage.toDouble)},
+	        visiblePages: 7,
+	        first: "@messages("first")",
+	        prev: "@messages("prev")",
+	        next: "@messages("next")",
+	        last: "@messages("last")",
+            onPageClick: function (event, page) {
+                // console.info('/ranking?p=' + page + ' (from options)');
+            }
+        }).on('page', function (event, page) {
+            console.info(page + ' (from event listening)');
+            params.set('p', page)
+            window.location.href = url;
+        });
+    });
+</script>
+<ul class="pager">
+	<nav  style="text-align:center" xaria-label="Page navigation">
+	    <ul class="pagination" id="pagination"></ul>
+	</nav>
+</ul>

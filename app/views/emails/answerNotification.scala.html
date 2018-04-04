@@ -1,0 +1,32 @@
+@import play.api.i18n.Messages
+@import play.twirl.api.Html
+@(user: models.daos.slick.Tables.UsersRow, questionUser: models.QuestionUser, answerUser: models.AnswerUser)(implicit messages: Messages, request: RequestHeader)
+<html>
+<body style="font-family:arial, sans-serif; font-size:12px;">
+	<img style="height:40px;" src="@{if(request.secure){"https://"}else{"http://"}+request.host+routes.Assets.at("imgs/logo.png")}" />
+	
+	<p>	
+		@messages("notification_mail.welcome", user.name)
+	</p>
+	
+	<p>
+		@Html(messages("notification_mail.where", (if(request.secure){"https://"}else{"http://"}+request.host+routes.QuestionController.question(questionUser.row.id,questionUser.informationRow.sluggedtitle)+"#answer-"+answerUser.row.id), questionUser.informationRow.title))
+	</p>
+	
+	<p>
+		@Html(messages("notification_mail.answer", answerUser.authorsRow.name, answerUser.informationRow.markeddescription.getOrElse("")))
+	</p>
+	
+	@if(user.id==questionUser.row.authorId.getOrElse(0L)){
+		<p>
+			@messages("notification_mail.mark_solution_and_comment_reminder")
+		</p>
+	}
+	
+	<hr />
+	<span style="display:block; color: #aaa;">
+		@Html(messages("notification_mail.footer_message", messages("site.name")))
+	</span>
+</body>
+</html>
+

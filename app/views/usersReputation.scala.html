@@ -1,0 +1,43 @@
+@(user: Option[User], displayUser: models.daos.slick.Tables.UsersRow, reputationEvents: Seq[models.VoteTitleModel], config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
+@import play.api.Play
+@import play.api.Play.current
+@import views.html.snippets._
+@import utils.RelativeTime
+@main(messages("metas.default.description",messages("site.name")), user) {
+@basicuserdata(user, displayUser)
+<ul class="user-profile-tabs">
+	<li class="tab">
+		<a href='/users/@displayUser.id/@{displayUser.sluggedname}'>
+			@messages("user_profile.summary")
+		</a>
+	</li>
+	<li class="tab selected">
+		<a href='/users/@displayUser.id/@{displayUser.sluggedname}/reputation'>
+			@messages("user_profile.reputation")
+		</a>
+	</li>
+</ul>
+	<div class="advanced-data-line-wrapper">
+		<section class="user-questions advanced-data-section">
+			<div class="subheader">
+				<h3 class="title section-title">@{snippets.singularplural(displayUser.karma.toInt, "touch.karma.singular", "touch.karma.plural")}</h3>
+			</div>
+		    <ul class="karma-history">
+			    @for(re<-reputationEvents){
+				<li class="ellipsis advanced-data-line">	
+					<span class="reputation-won">
+						<span class="counter karma-value @{if(re.voteCount>0)"positive"else"negative"}-karma">@{if(re.voteCount>0)"+"}@re.voteCount</span>
+					</span>
+					<span class="event-time">@RelativeTime.format(re.date)</span>
+					<a href="/@{re.id + "-" + re.sluggedTitle}">
+						@re.title 
+					</a>
+				</li>
+				}	
+			</ul>
+		</section>
+	</div>
+	</div>
+</section>
+</div>
+}

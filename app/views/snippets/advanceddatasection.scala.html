@@ -1,0 +1,28 @@
+@(datatype: String, displayUserId: Long, size: Int, singular: String, plural: String, votesTitles: Seq[VoteTitleModel], elementsPerPage: Int)(implicit messages: Messages)
+		<section class="user-questions advanced-data-section">
+			<div class="subheader">
+				<h3 class="title section-title">@{snippets.singularplural(size, singular, plural)}</h3>
+				@if(datatype=="questions" || datatype=="answers"){
+				<ul class="subheader-menu nav">
+					<li class="nav-item">
+						<a class="order-by selected" data-type="@datatype" data-target-id="user-@datatype" href="/users/@displayUserId/postsByType/@{datatype}?order=ByVotes">votes</a>
+					</li>
+					<li class="nav-item">
+						<a class="order-by" data-type="@datatype" data-target-id="user-@datatype" href="/users/@displayUserId/postsByType/@{datatype}?order=ByDate">date</a>
+					</li>
+				</ul>
+				}
+			</div>
+			<ul id="user-@datatype" class="fixed-height">
+			@for(vt<-votesTitles){
+			    @advanceddataline(vt.voteCount, "/" + vt.id + "-" + vt.sluggedTitle, vt.title)
+			}
+			</ul>
+			<ul class="pager">
+			@for(p <- 1 to Math.ceil(size.toDouble/(elementsPerPage).toDouble).toInt){
+				<li class="page-item @{if(p==1)"current"}">
+						<a rel="nofollow" href="/users/@displayUserId/postsByType/@{datatype}?order=ByVotes&p=@p" data-type="@datatype" data-target-id="user-@datatype">@p</a>
+				</li>
+			}
+			</ul>
+		</section>

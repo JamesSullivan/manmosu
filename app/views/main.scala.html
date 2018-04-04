@@ -1,0 +1,63 @@
+@(title: String, user: Option[models.User] = None)(content: Html)(implicit request: RequestHeader, messages: Messages)
+@import play.api.mvc.RequestHeader
+@import play.api.Play
+@import views.html.headers._
+@import views.html.modal._
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>@title</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <!-- <link rel="stylesheet" href="@routes.Assets.at("css/main2.css")" media="all" type="text/css" /> -->
+        <link rel="stylesheet" href="@routes.Assets.at("css/manmosu.css")" media="all" type="text/css" />
+        <link rel="stylesheet" href="@routes.Assets.at("css/hopscotch.min.css")" />
+        <link rel="stylesheet" href="@routes.Assets.at("css/custom.css")" media="all" type="text/css" />
+        <link rel="shortcut icon" type="image/ico" href="@routes.Assets.at("imgs/favicon.ico")" />
+        <style>
+        /* Impede click-jacking */
+         html { display : none; }
+        </style>
+        <script>
+        if (self == top) {
+            document.documentElement.style.display = 'block';
+        } else {
+            top.location = self.location;
+        }
+        </script>
+        <header class="header clear">
+        	@firstheader(messages)
+        	@secondheader(user, messages, request)
+        </header>
+            <div class="container">
+	            <div class="starter-template row">
+	             <style>
+						.alert {font-size: 150%;}
+				</style>
+	                @request.flash.get("error").map { msg =>
+	                    <div class="col-md-6 col-md-offset-3 alert alert-danger moderator-alert">
+	                        <a href="#" class="close" data-dismiss="alert">&times;</a>
+	                        <strong>@messages("error.occured")</strong> @msg
+	                    </div><br/><br/><br/><br/>
+	                }
+	                @request.flash.get("info").map { msg =>
+	                    <div class="col-md-6 col-md-offset-3 alert alert-info post-vote-count">
+	                        <a href="#" class="close" data-dismiss="alert">&times;</a>
+	                        <strong>@messages("info")</strong> @msg
+	                    </div><br/><br/><br/><br/>
+	                }
+	                @request.flash.get("success").map { msg =>
+	                    <div class="col-md-6 col-md-offset-3 alert alert-success post-vote-count">
+	                        <a href="#" class="close" data-dismiss="alert">&times;</a>
+	                        <strong>@messages("success")</strong> @msg
+	                    </div><br/><br/><br/><br/>
+	                }
+	             </div>
+	            @content
+        	</div>
+        	@footer(messages)
+    </body>
+</html>

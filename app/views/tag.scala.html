@@ -1,0 +1,25 @@
+@(user: Option[User], tag: String, numberOfQuestions: Int, questions: Seq[QuestionUser], recentTags: Seq[models.daos.slick.Tables.TagxRow],	 config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
+@import play.api.Play
+@import play.api.Play.current
+@import views.html.snippets._
+@main(messages("metas.default.description",messages("site.name")), user) {
+<section class="first-content content">
+	<div class="subheader"></div>
+	<div class="subheader subheader-with-tab ">
+		<div class="tabs tabs-tag">Tag:  
+			<a class="selected" href="/tag/@tag">@tag</a>
+			<a href="/ranking/@tag" title='@messages("users.ranking.tag.title") @tag' class="icon-award">@messages("users.ranking.tag")</a>
+		</div>
+	</div>
+	@questionlist(user, questions, true)
+	@pager(numberOfQuestions,config.get[Int]("elements_per_page"))
+</section>
+
+<aside class="sidebar">
+	@recenttags(recentTags)
+</aside>
+</div>
+
+
+
+}

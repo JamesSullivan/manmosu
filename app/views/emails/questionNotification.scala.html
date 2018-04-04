@@ -1,0 +1,22 @@
+@import play.api.i18n.Messages
+@import play.twirl.api.Html
+@(user: models.daos.slick.Tables.UsersRow, questionUser: models.QuestionUser)(implicit messages: Messages, request: RequestHeader)
+<html>
+	<body style="font-family:arial, sans-serif; font-size:12px;">
+		<img style="height:40px;" src="@{if(request.secure){"https://"}else{"http://"}+request.host+routes.Assets.at("imgs/logo.png")}" />
+
+		<p>
+		@messages("notification_mail.welcome", user.name)
+		</p>
+		<p>
+		@messages("new_question_mail.message", messages("site.name"))
+		</p>
+		<p>
+		@Html(messages("new_question_mail.question_link", (if(request.secure){"https://"}else{"http://"}+request.host+routes.QuestionController.question(questionUser.row.id,questionUser.informationRow.sluggedtitle)), questionUser.informationRow.title))
+		</p>
+
+		<span style="display:block; color: #aaa;">
+			@Html(messages("new_question_mail.footer", messages("site.name")))
+		</span>
+	</body>
+</html>

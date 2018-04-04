@@ -1,0 +1,41 @@
+@(qa: models.QorA, qauthor: Boolean, dataauthor: Boolean, solutionId: Option[Long], watching: Boolean, config: play.api.Configuration)(implicit messages: Messages)
+		<div class="vote-container post-vote">
+			<a rel="nofollow" class="container requires-login requires-karma author-cant up-vote up-arrow arrow vote-option @{if(qa.voted ==1)"voted "} " data-value="up" 
+					data-author="@dataauthor" 
+			 		data-type="@qa.text"
+				    data-karma="@config.get[Int]("permission.rule.vote_up")"
+				    data-id="@qa.row.id"
+				    title="@{if(qa.isQuestion) messages("Question.upvote") else messages("Answer.upvote")}">up
+		    </a>
+			<span class="vote-count post-vote-count">@qa.row.votecount</span>
+			
+			<a rel="nofollow" class="container requires-login author-cant down-vote down-arrow arrow vote-option requires-karma @{if(qa.voted == -1){"voted "}}" data-value="down"  
+			 		data-author="@dataauthor"
+			 		data-type="@qa.text" 
+				    data-karma="@config.get[Int]("permission.rule.vote_down")" 
+			 		data-id="@qa.row.id"
+			 		title="@{if(qa.isQuestion) messages("Question.downvote", config.get[Int]("karma.my_question_voted_down"), config.get[Int]("karma.downvoted_question_or_answer")) else messages("Answer.downvote", config.get[Int]("karma.my_answer_voted_down"), config.get[Int]("karma.downvoted_question_or_answer"))}">down
+			 </a>
+		</div>
+		@if(qa.isQuestion){
+		<div>
+			<a rel="nofollow" class="watch requires-login" href="/question/watched/@qa.row.id">
+			@if(watching){
+				<span class="icon-eye icon-2x container" title="@messages("watch.enabled.tooltip")"></span>
+			}else{
+				<span class="icon-eye-off icon-muted icon-2x container" title="Click here to receive news about this question and its answers. "></span>
+			}
+			</a>
+		</div>
+		}else if(qa.text=="answer") {
+		<div class="@{if(solutionId.isEmpty||(solutionId.isDefined&&solutionId.get!=qa.row.id)){"not-"}}solution-container">
+			@if(qauthor || (solutionId.isDefined&&solutionId.get==qa.row.id)){
+			<a class="mark-as-solution requires-login" href="/mark-as-solution/@qa.row.id">
+				<span class="icon-ok-circled icon-2x icon-muted container solution-tick"></span>
+				@if(solutionId.isEmpty||(solutionId.isDefined&&solutionId.get==qa.row.id)){
+				<span class="mark-as-solution-subtitle">@messages("answer.mark_as_solution")</span>
+				}
+			</a>
+			}
+		</div>
+		}

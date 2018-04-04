@@ -1,0 +1,15 @@
+@(datatype: String, title: String, tagRankings: Seq[models.TagRanking])(implicit messages: Messages)
+<div class="tag-ranking-section">
+	<h2 class="title page-title">@title</h2>
+	@for(tr<-tagRankings){
+	<span class="tag-ranking-karma karma">@tr.totalKarma</span>
+	<span class="tag-ranking-count">@{snippets.qasingularpluralform(tr.reputationEventRows.size, datatype)}</span>
+	<div class="ranking-user">
+		<img class="user-image" src="@{utils.Photo.getPhoto(tr.user, 32, 32)}"/>
+		<div class="user-info">
+			<a class="user-name ellipsis"  href="/users/@{tr.user.id}/@{tr.user.sluggedname}">@tr.user.name</a>
+			<div class="user-karma">@tr.user.karma @messages("touch.karma.plural")</div>
+		</div>
+	</div>
+	}
+</div>

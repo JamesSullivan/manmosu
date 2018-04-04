@@ -1,0 +1,56 @@
+@(user: Option[User], displayUser: models.daos.slick.Tables.UsersRow)(implicit messages: Messages)
+@import utils.RelativeTime
+<section class="basic-user-data user-data">
+	<div class="subheader">
+		<a class="title page-title"  href="/users/@{displayUser.id}/@{displayUser.sluggedname}">@displayUser.name</a>
+		@if(user.isDefined&&user.get.userID==displayUser.id){
+		<ul class="subheader-menu">
+			<li><a href="/users/edit/@{displayUser.id}">@messages("user_profile.edit")</a></li>
+		</ul>
+		}
+	</div>
+	<div class="image-and-information">
+		<img class="user-image profile-image" src="@{utils.Photo.getPhoto(displayUser, 128, 128)}"/>
+		<span class="karma">@displayUser.karma</span>
+		<span>@messages("user_profile.reputation")</span>
+	</div>
+	<ul class="data-list">
+		<li class="data-line">
+			<h5 class="data-section-title ellipsis">@messages("user_profile.bio")</h5>
+			<dl class="data-section">
+				<dt class="data-title ellipsis">@messages("user_profile.name")</dt>
+				<dd class="data-description ellipsis">@displayUser.name</dd>
+				<dt class="data-title ellipsis">@messages("user_profile.website")</dt>
+				<dd class="data-description ellipsis"><a rel='nofollow' href='@displayUser.website'>@displayUser.website</a></dd>
+				<dt class="data-title ellipsis">@messages("user_profile.location")</dt>
+				<dd class="data-description ellipsis">@displayUser.location</dd>
+				<dt class="data-title ellipsis">@messages("user_profile.age")</dt>
+				<dd class="data-description ellipsis">@displayUser.birthdate.map(RelativeTime.age(_))</dd>
+			</dl>
+		</li>
+		<li class="data-line">
+			<h5 class="data-section-title ellipsis">@messages("user_profile.stats")</h5>
+			<dl class="data-section">
+				<dt class="data-title ellipsis">@messages("user_profile.created_at")</dt>
+				<dd class="data-description ellipsis">@RelativeTime.format(displayUser.createdat)</dd>
+			</dl>
+		</li>
+		@if(user.isDefined&&user.get.userID==displayUser.id){
+		<li class="data-line">
+			<h5 class="data-section-title ellipsis">@messages("user_profile.private")</h5>
+			<dl class="data-section">
+				<dt class="data-title ellipsis">@messages("user_profile.email")</dt>
+				<dd class="data-description ellipsis profile-email">@displayUser.email</dd>
+			</dl>
+		</li>
+		}
+	</ul>
+	<div class="about-me">
+	@if(displayUser.markedabout.isDefined){
+		@Html(displayUser.markedabout.get)
+	} else if(user.isDefined&&user.get.userID==displayUser.id){
+		@messages("user_profile.blank_about_me")
+		<a href="/users/edit/@displayUser.id">@messages("user_profile.blank_about_me.click") </a>
+	}
+	</div>
+</section>

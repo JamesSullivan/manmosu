@@ -1,0 +1,34 @@
+@(implicit messages: Messages)
+
+<section class="about-banner">
+	<span data-toggle="collapse" data-target=".collapseablehow" class="minimize-banner icon-minus"></span>
+	<div class="about-content tell-me-more">
+		<h3 class="about-title title collapse in collapseablehow">@messages("about.home_banner.welcome",messages("site.name"))</h3>
+		<div class="about-text">
+			@Html(messages("about.home_banner.text",messages("site.name")))
+		</div>
+		<a href="/about">@messages("about.home_banner.text.link",messages("site.name"))</a>
+	</div>
+	<div  class="about-content how-it-works collapse in collapseablehow">
+		<ul>
+			<li class="how-it-works-item">
+				<a class="how-it-works-info" href="/ask"><span class="icon-comment how-it-works-icon icon-3x"></span></a>
+				<div class="how-it-works-subtitle-container">
+					<a class="how-it-works-info how-it-works-subtitle" href="/ask">@Html(messages("about.home_banner.how_it_works.anyone_ask"))</a>
+				</div>
+			</li>
+			<li class="how-it-works-item">
+				<a class="how-it-works-info" href="/ask"><span class="icon-chat-empty how-it-works-icon icon-3x"></span></a>
+				<div class="how-it-works-subtitle-container">
+					<a class="how-it-works-info how-it-works-subtitle" href="/ask">@Html(messages("about.home_banner.how_it_works.anyone_ask"))</a>
+				</div>
+			</li>
+			<li class="how-it-works-item">
+				<a class="how-it-works-info" href="/ask"><span class="icon-users how-it-works-icon icon-3x"></span></a>
+				<div class="how-it-works-subtitle-container">
+					<a class="how-it-works-info how-it-works-subtitle" href="/ask">@Html(messages("about.home_banner.how_it_works.answers_raise_up"))</a>
+				</div>
+			</li>
+	  </ul> 
+	</div>
+</section>

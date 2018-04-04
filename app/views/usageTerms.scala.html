@@ -1,0 +1,41 @@
+@(user: Option[User], config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
+@import play.api.Play
+@import play.api.Play.current
+@import views.html.snippets._
+@import utils.RelativeTime
+@main(messages("metas.default.description",messages("site.name") + " - " + messages("signup.terms.title")), user) {
+<h2 class="title big-text-title">@messages("signup.terms.title")</h2>
+
+<div class="big-text">
+	<tags:brutal-include value="terms"/>
+</div>
+<h2 class="title big-text-title">@messages("privacy_policy.introduction.title")</h2>
+<div class="big-text">
+	<p>@messages("privacy_policy.introduction.content")</p>
+</div>
+
+<h2 id="privacy-what-we-collect" class="title big-text-title">@messages("privacy_policy.what_we_collect.title")</h2>
+
+<h2 class="title" id="given-information">@Html(messages("privacy_policy.what_we_collect.user_given_information.title"))</h2>
+<div class="big-text">
+	<p>@Html(messages("privacy_policy.what_we_collect.user_given_information.content"))</p>
+</div>
+<h2 class="title" id="collected-information">@Html(messages("privacy_policy.what_we_collect.site_use.title"))</h2>
+<div class="big-text">
+	<p>@Html(messages("privacy_policy.what_we_collect.site_use.content"))</p>
+</div>
+
+
+<h2 id="privacy-what-we-do" class="title big-text-title">@Html(messages("privacy_policy.what_we_do.title"))</h2>
+
+<h2 class="title">@Html(messages("privacy_policy.what_we_do.user_given_information.title"))</h2>
+<div class="big-text">
+	<p>@Html(messages("privacy_policy.what_we_do.user_given_information.content"))</p>
+</div>
+<h2 class="title">@Html(messages("privacy_policy.what_we_do.site_use.title"))</h2>
+<div class="big-text">
+	<p>@Html(messages("privacy_policy.what_we_do.site_use.content"))</p>
+</div>
+
+</div>
+}

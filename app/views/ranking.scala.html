@@ -1,0 +1,21 @@
+@(user: Option[User], numberOfUsers: Int, authorsRows: Seq[models.daos.slick.Tables.UsersRow], config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
+@import play.api.Play
+@import play.api.Play.current
+@import views.html.snippets._
+@main(messages("metas.default.description",messages("site.name")), user) {
+<h2 class="title page-title subheader">@messages("users.ranking")</h2>
+<ul class="ranking">
+	@for(author<-authorsRows) {
+	<li class="ranking-item">
+		<div class="ranking-user">
+			<img class="user-image" src="@{utils.Photo.getPhoto(author, 48, 48)}"/>
+			<div class="user-info">
+				<a class="user-name ellipsis"  href="/users/@{author.id}/@{author.sluggedname}">@author.name</a>
+				<div class="user-karma">@{author.karma} @messages("user_profile.karma_history.singular")</div>
+			</div>
+		</div>
+	</li>
+	}
+</ul>
+@pager(numberOfUsers,config.get[Int]("elements_per_page"))
+}

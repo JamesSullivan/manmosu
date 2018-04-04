@@ -1,0 +1,30 @@
+@(userId: Long, questionId: Long, id: Long, datatype: String, comments: Seq[models.CommentUser])(implicit messages: Messages)
+
+<ul class="comment-list @{if(comments.size < 1){"hidden"}}" id="new-comment-for-@{datatype.toLowerCase}-new-comment-@id">
+@for(c<-comments) {
+  @comment(userId, questionId, c)
+}
+</ul>
+
+<div class="simple-ajax-form">
+	<a href="#" class="requires-login post-action add-comment requires-karma" data-karma="0">Add comment</a>
+	<div class="ajax-form hidden">
+		<form method="post" action="/@{datatype.toLowerCase}/@id/comment" class="validated-form ajax" data-ajax-on-callback="append" data-ajax-result="new-comment-for-@{datatype.toLowerCase}-new-comment-@id">
+			<textarea class="comment-textarea required to-focus hintable text-input" minlength="15" maxlength="600" name="comment" data-hint-id="new-comment-for-@{datatype.toLowerCase}-new-comment-@id-hint"></textarea>
+			<input class="post-submit submit" type="submit" value="Add comment" />
+			<input name="questionId" type="hidden" value="@questionId" />
+			<div class="comment-remaining-characters">@messages("comment.remaining_characters")<span class="comment-length-counter"> 600</span></div>
+			<button class="post-submit  submit cancel ">@messages("cancel_button")</button>
+			<label class="form-watch">
+				<input type="checkbox" name="watching" value="true" checked="checked"/> 
+				@messages("post.watch")
+			</label>
+		</form>
+		<div class="hint" id="new-comment-for-@{datatype.toLowerCase}-new-comment-@id-hint">
+			@Html(messages("comment.hint"))
+		</div>
+	</div>
+</div>
+
+
+

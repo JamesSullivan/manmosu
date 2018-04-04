@@ -1,0 +1,21 @@
+@(size: Int, datatype: String)(implicit messages: Messages)
+<span class="counter">@size</span>&nbsp;
+@if(datatype=="Answer"){
+	@if(size==1) {
+		@messages("question.list.answer.singular")
+	 } else {
+	 	@messages("question.list.answer.plural")
+	 }
+}else if(datatype=="Views"){
+	@if(size==1){
+		@messages("post.list.view.singular")
+	} else {
+		@messages("post.list.view.plural")
+	}
+}else{
+	@if(size==1){
+		@messages("user_profile.questions.singular")
+	} else {
+		@messages("user_profile.questions.plural")
+	}
+}

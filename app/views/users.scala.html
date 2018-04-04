@@ -1,0 +1,98 @@
+@(user: Option[User], displayUser: models.daos.slick.Tables.UsersRow, qnum: Int, questions: Seq[models.VoteTitleModel], anum: Int, answers: Seq[models.VoteTitleModel],  
+	wnum: Int, watches: Seq[models.VoteTitleModel], reputationEvents: Seq[models.VoteTitleModel], tags: Seq[models.daos.slick.Tables.TagxRow], config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
+@import play.api.Play
+@import play.api.Play.current
+@import views.html.snippets._
+@main(messages("metas.default.description",messages("site.name")), user) {
+@basicuserdata(user, displayUser)
+<ul class="user-profile-tabs">
+	<li class="tab selected">
+		<a href='/users/@displayUser.id/@{displayUser.sluggedname}'>
+			@messages("user_profile.summary")
+		</a>
+	</li>
+	<li class="tab ">
+		<a href='/users/@displayUser.id/@{displayUser.sluggedname}/reputation'>
+			@messages("user_profile.reputation")
+		</a>
+	</li>
+</ul>
+<script>
+$(document).ready(function() {
+$('a.order-by').click(function(){
+	var target = $(this).attr('data-target-id')
+	var vote = $(this).attr('href').endsWith('ByVotes')
+	$.ajax({url: $(this).attr('href'), success: function(result){document.getElementById(target).innerHTML = result; }});
+    $(this).parent().parent().find('a.order-by').removeClass('selected')
+    $(this).addClass('selected');
+    if(vote){
+    	pageAnchors= $(this).parent().parent().parent().parent().find('li.page-item a')
+		var i = pageAnchors.length;
+		while (i--) {
+			var newUrl = pageAnchors[i].getAttribute("href").replace("order=ByDate", "order=ByVotes")
+		    pageAnchors[i].setAttribute("href", newUrl);
+		}
+    }else{
+    	pageAnchors = $(this).parent().parent().parent().parent().find('li.page-item a')
+		var i = pageAnchors.length;
+		while (i--) {
+			var newUrl = pageAnchors[i].getAttribute("href").replace("order=ByVotes", "order=ByDate")
+		    pageAnchors[i].setAttribute("href", newUrl);
+		}
+    }
+    return false; 
+});
+$('ul.pager a').click(function(){
+	var target = $(this).attr('data-target-id')
+	$.ajax({url: $(this).attr('href'), success: function(result){document.getElementById(target).innerHTML = result; }});
+    $(this).parent().parent().find('li').removeClass('current')
+    $(this).parent().addClass('current');
+    return false; 
+});
+});
+</script>
+<section class="advanced-user-data user-data">
+	<div class="advanced-data-line-wrapper">
+		@advanceddatasection("questions", displayUser.id, qnum, "user_profile.questions.singular", "user_profile.questions.plural", questions, config.get[Int]("elements_per_page"))
+		@advanceddatasection("answers", displayUser.id, anum, "question.list.answer.singular", "question.list.answer.plural", answers, config.get[Int]("elements_per_page"))
+	</div>
+	<div class="advanced-data-line-wrapper">
+		@advanceddatasection("watched", displayUser.id, wnum, "user_profile.watched_questions.singular", "user_profile.watched_questions.plural", watches, config.get[Int]("elements_per_page"))
+
+		<section class="user-questions advanced-data-section">
+			<div class="subheader">
+				<h3 class="title section-title">@{snippets.singularplural(displayUser.karma.toInt, "touch.karma.singular", "touch.karma.plural")}</h3>
+			</div>
+			<ul id="user-historico-reputacao" class="fixed-height">
+			    @for(re<-reputationEvents){
+				<li class="ellipsis advanced-data-line">	
+					<span class="reputation-won">
+						<span class="counter karma-value @{if(re.voteCount>0)"positive"else"negative"}-karma">@{if(re.voteCount>0)"+"}@re.voteCount</span>
+					</span>
+					<a href="/@{re.id + "-" + re.sluggedTitle}">
+						@re.title 
+					</a>
+				</li>
+				}
+				<a class="view-more" href="/users/@{displayUser.id}/@{displayUser.sluggedname}/reputation">@messages("show_more")</a>	
+			</ul>
+		</section>
+	</div>
+	<div class="advanced-data-line-wrapper">
+		<section class="user-questions advanced-data-section">
+			<div class="subheader">
+				<h3 class="title section-title">@{snippets.singularplural(tags.size, "user_profile.tags.singular", "user_profile.tags.plural")}</h3>
+			</div>
+			<ul id="user-tags" class="fixed-height">
+				@for(t<-tags){
+				<li class="ellipsis advanced-data-line tag-line"><span class="counter tag-usage">@t.usagecount</span><a href="/tag/@t.name" class="tag-brutal">@t.name</a></li>
+				}
+			</ul>
+		</section>
+	</div>
+</section>
+</div>
+
+
+
+}

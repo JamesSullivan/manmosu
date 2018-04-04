@@ -1,0 +1,23 @@
+@(qa: models.daos.slick.QA.Value, id: Long, attachments: Seq[models.daos.slick.Tables.AttachmentRow], editable: Boolean)(implicit messages: Messages)
+@if(attachments.length > 0){
+<br/>
+<table class="uploaded-files ">
+	<tbody>
+		<tr><th>@messages("question.attachments.name")</th><th></th><th></th></tr>
+		@for(a<-attachments){
+	     <tr id="attachment-@a.id">
+	         <td>@a.name</td>
+	         <td>
+	             <a href="/attachments/@a.id" target="_blank">/attachments/@a.id</a>
+	         </td>
+	         <td>
+	             @if(editable){
+	             <a class="remove-attachment" data-attachment-id="@a.id" href="/remove/@id/@a.id">@messages("question.attachments.remove")</a>
+	             }
+	         </td>
+	     </tr>
+	     <input name="attachmentsIds[]" id="input-attachment-@a.id" value="@a.id" class="ignore" type="hidden">
+	     }
+	</tbody>
+</table>
+} 

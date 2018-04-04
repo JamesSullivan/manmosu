@@ -1,0 +1,56 @@
+@(id: Long, answerForm: Form[forms.AnswerForm.Answer], attachments: Seq[models.daos.slick.Tables.AttachmentRow], user: User, config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
+@import play.api.Play
+@import play.api.Play.current
+@import utils.RelativeTime
+@import views.html.snippets._
+	<h2 class="title page-title subheader new-answer-title">@messages("newanswer.answer")</h2>
+	    <form action="/answer/@{if(request.uri.contains("/edit/")){"edit/"+id}else{id}}" method="post" class="validated-form form-with-upload hinted-form answer-form" data-same-author="false">
+			@helper.CSRF.formField
+			<div class="wmd">
+				<div class="wmd-panel">
+					<div id="wmd-button-bar"></div>
+					<img id="image-editor-preview" alt="Preview" style="display: none">
+					@helper.textarea(answerForm("description"),'id-> "wmd-input", '_label -> messages("newanswer.answer"), 
+			     	'class -> "required description-input hintable wmd-input", 'datahintid->"newanswer-answer-hint",
+			     	'minlength->"15", 'maxlength->"20000", 'onfocus->"setHints(this);",
+			     	'placeholder->Html(messages("answer.form.placeholder")), '_showConstraints -> false)
+				</div>
+				<div id="wmd-preview" class="md-panel md-preview hidden"></div>
+			</div>
+		@attachmentsavailable(models.daos.slick.QA.ANSWER, answerForm("answerId").value.getOrElse("0").toLong, attachments, true)
+	    <div>
+			<label style="display: inline-block;">@messages("question.attachments.choose")&nbsp;</label>
+			<a id="uploadclear" class="hidden" onclick="$('#files').replaceWith( $('#files').val('').clone( true ));document.getElementById('list').innerHTML = '';document.getElementById('files').addEventListener('change', handleFileSelect, false);" class="cancel-upload">@messages("cancel_button")</a>
+			<input form="uploadForm" width="60" type="file" id="files" name="files[]" multiple />
+			<output id="list"></output>
+		</div>
+		<br/>
+	  @{val showInput = if(request.uri.contains("/edit/")) "text" else "hidden"
+	  val showLabel = if(request.uri.contains("/edit/")) messages("edit_form.comment.label") else ""
+		helper.inputText(answerForm("comment"), '_label -> showLabel, 'class -> "hintable text-input required", 
+		'datahintid->"answer-comment-hint", 'minlength->"5", 'maxlength->"250", 
+		'placeholder->messages("edit_form.comment.placeholder"), 'onfocus->"setHints(this);",
+		'_showConstraints -> false, 'type->showInput)
+      }
+	  @helper.inputText(answerForm("answerId"), '_label -> "", 'type->"hidden", '_showConstraints -> false)
+	  @helper.inputText(answerForm("questionId"), '_label -> "", 'type->"hidden", '_showConstraints -> false)
+		<input class="post-submit big-submit submit" onclick="callUpload();" value="Confirm." type="submit" />
+		<p>&nbsp;</p>
+		<label style="display: inline-block;"><input id="watching" name="watching" value="true" checked="@answerForm("watching").value" class="ignore" type="checkbox">@messages("post.watch")</label>
+
+	</form>
+	  <p><br/></p><p><br/></p>
+      <div class="form-hints">
+		<div id="newanswer-answer-hint" class="hint">
+					<p>
+						@Html(messages("newanswer.answer.hint", messages("site.name")))
+					</p>
+		</div>
+		<div id="answer-comment-hint" class="hint">
+			Hello@Html(messages("edit_form.comment.hint"))
+		</div>
+		</div>
+<form method="post" id="uploadForm" enctype="multipart/form-data">@helper.CSRF.formField</form>
+<script src="/assets/js/attachments.js"></script>
+<script src="/assets/js/answer-form.js"></script>
+<script src="/assets/js/form-hints.js"></script>

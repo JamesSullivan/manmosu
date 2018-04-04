@@ -1,0 +1,18 @@
+@(implicit messages: Messages)
+<footer class="footer dark-footer">
+	<div class="container">
+		<div class="footer-muted-message">
+			@messages("site.name")&nbsp;&nbsp;<a href="/about">FAQ</a>
+			&nbsp;&nbsp;<a href="/usage-terms">@messages("metas.terms_of_service.title")</a>
+		</div>
+		<span class="footer-menu">
+			<a href="/unsolved" class="unsolved-link">@messages("menu.unsolved")</a>&nbsp;&nbsp;
+			<a href="/unanswered">@messages("menu.unanswered")</a>
+		</span>
+		<span class="footer-vraptor">
+			Powered by: <a href="https://github.com/JamesSullivan/manmosu">@messages("footer.manmosu")</a>
+		</span>
+		<span class="footer-muted-message">
+		</span>
+	</div>
+</footer>

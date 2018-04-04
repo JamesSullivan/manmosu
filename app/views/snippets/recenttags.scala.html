@@ -1,0 +1,11 @@
+@(recentTags: Seq[models.daos.slick.Tables.TagxRow])(implicit messages: Messages)
+	<div class="subheader">
+		<h3 class="title page-title">@messages("tags.recent")</h3>
+	</div>
+	<ol id="tags-usage" class="tags-usage">
+	@for(t<-recentTags){
+		<li class="tags-item">
+			<a href="/tag/@t.name" class="tag-brutal">@t.name</a> x @t.usagecount
+		</li>
+	}
+	</ol>

@@ -1,0 +1,21 @@
+@(id: Long, answerForm: Form[forms.AnswerForm.Answer], attachments: Seq[models.daos.slick.Tables.AttachmentRow], user: User, config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
+@import play.api.Play
+@import play.api.Play.current
+@import utils.RelativeTime
+@import views.html.snippets._
+@main(messages("metas.default.description",messages("site.name") + " - " + messages("metas.question.title")), Some(user)) {
+@answerform(id, answerForm, attachments, user, config)
+
+<script src="/assets/js/deps/Markdown.Converter.js"></script>
+<script src="/assets/js/deps/Markdown.Editor.js"></script>
+<script src="/assets/js/deps/Markdown.Sanitizer.js"></script>
+
+<script type="text/javascript">
+    (function () {
+        var converter1 = new Markdown.Converter();
+        var editor1 = new Markdown.Editor(converter1);
+        editor1.run();  
+    })();
+</script>
+
+}

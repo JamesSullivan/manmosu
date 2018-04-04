@@ -1,0 +1,46 @@
+@(user: Option[User], questions: Seq[QuestionUser], full: Boolean)(implicit messages: Messages)
+	<ol class="question-list">
+	@for(q<-questions) {
+		<li class="post-item question-item ">
+		 	@if(full==true){
+			<div  class="post-information question-information">
+				<div id="votes" class="info votes question-info">@{q.row.votecount}<div class="subtitle">@{if(q.row.votecount==1) messages("post.list.vote.singular") else messages("post.list.vote.plural")}</div></div>
+				<div id="answers" class="info answers@{if(q.row.answercount>0)" answered"}@{if(q.row.solutionId.isDefined)" solved"} question-info">@{q.row.answercount}<div class="subtitle">@{if(q.row.answercount==1) messages("question.list.answer.singular") else messages("question.list.answer.plural")}</div></div>
+			</div>
+			}
+			<div class="summary question-summary">
+				<div class="item-title-wrapper">
+					<h3 class="title @if(full){item-title main-thread-title }question-title">
+						<a href="/@{q.informationRow.questionId.get+"-"+q.informationRow.sluggedtitle}">@{q.informationRow.title}</a>
+					</h3>
+					@if(full==true){
+					<ul class="tags" itemprop="keywords">
+					@for(t<-q.tags){
+						<li class="tags-item">
+							<a href="/tag/@{t.tagxRow.name}" class="tag-brutal">@{t.tagxRow.name}</a>
+						</li>
+					}
+					</ul>
+					<div class="post-simple-information">@qasingularpluralform(q.row.views.toInt, "Views")</div>
+					}
+				</div>
+				@if(q.authorsRow != null){
+				<div class="last-touch">
+					<div class="complete-user">
+						<time class="when"  datetime="@{q.row.createdat.getOrElse("")}">created @q.createdat</time>
+						<a href="/users/@{q.row.authorId}/@{q.authorsRow.sluggedname}"><img border="0" class="user-image" src="@{utils.Photo.getPhoto(q.authorsRow, 32, 32)}"/></a>
+						<div class="user-info">
+							<a class="user-name ellipsis"  href="/users/@{q.row.authorId}/@{q.authorsRow.sluggedname}">@{q.authorsRow.name}</a>
+							<div title="a way to measure the user's score" class="user-karma ellipsis">@{q.authorsRow.karma} @messages("touch.karma.plural")</div>
+						</div>
+					</div>
+				</div>
+				}
+			</div>
+			@{if(!user.isEmpty && (user.get.userID == q.row.authorId.get || user.get.userID == q.row.lasttouchedbyId.get )){
+			<div class="interaction" title="You are participating in this question!"> </div>
+			}
+			}
+		</li>
+		}
+	</ol>

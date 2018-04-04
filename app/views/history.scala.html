@@ -1,0 +1,173 @@
+@(user: Option[User], q: QuestionUser, config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
+@import play.api.Play
+@import play.api.Play.current
+@import utils.RelativeTime
+@import views.html.snippets._
+@main(messages("metas.default.description",messages("site.name")), user) {
+@if(user.isEmpty){@aboutbanner(messages)}
+<div class="history-comparison">
+	<div class="history-current">
+		<h2 class="history-title page-title title">@messages("moderation.current_version"):</h2>
+		<h2 class="title main-thread-title">
+			<a href="/@{q.row.id}-@{q.informationRow.sluggedtitle}">@q.informationRow.title</a>
+		</h2>
+		<div class="post-text">
+			<p>@Html(q.informationRow.markeddescription.getOrElse(""))</p>
+		</div>
+		<ul class="tags" itemprop="keywords">
+		  @if(q.informationUserTagRows.length>0){
+			@for(t<-q.informationUserTagRows.head._3){
+			<li class="tags-item">
+				<a href="/tag/@{t.name}" class="tag-brutal">@{t.name}</a>
+			</li>
+			}
+		  }
+		</ul>
+	</div>
+	<div class="history-edited">
+		<h2 class="history-title page-title title">@messages("moderation.version.plural") (@{q.informationUserTagRows.length}):</h2>
+		<select class="history-select-version">
+			@for((qiu,index)<-q.informationUserTagRows.zipWithIndex){
+			<option selected value="@index">@qiu._2.name on @qiu._1.createdat</option>
+			}
+		</select>
+		@for((qiu,index)<-q.informationUserTagRows.zipWithIndex){
+		<div class="history-forms-area @{if(index<(q.informationUserTagRows.length-1))"hidden"}">
+			<form method="post" class="history-form moderate-form" action="/publish/">
+				<a href="#" class="toggle-version">@messages("moderation.formatted")</a>
+				<a href="#" class="toggle-version hidden">@messages("moderation.diff")</a>
+				<h2 class="title main-thread-title">@qiu._1.title</h2>
+				<div class="history-version hidden">
+					<div class="post-text">
+						<p>@Html(qiu._1.markeddescription.getOrElse(""))</p>
+					</div>
+					<ul class="tags" itemprop="keywords">
+						@for(t<-qiu._3){
+						<li class="tags-item">
+							<a href="/tag/@{t.name}" class="tag-brutal">@{t.name}</a>
+						</li>
+						}
+					</ul>
+				</div>
+				<div class="history-diff post-text"></div>
+				<div class="history-version">
+					<ul class="tags" itemprop="keywords">
+						@for(t<-qiu._3){
+						<li class="tags-item">
+							<a href="/tag/@{t.name}" class="tag-brutal">@{t.name}</a>
+						</li>
+						}
+					</ul>
+				</div>
+						
+				<ul class="post-touchs clear">
+					<li class="touch author-touch">
+						<div class="complete-user">
+							<div class="when" itemprop="dateCreated">@{RelativeTime.format(qiu._1.createdat)}</div>
+							<a href="/users/@{qiu._2.id}/@{qiu._2.sluggedname}"><img border="0" class="user-image" src="@{utils.Photo.getPhoto(qiu._2, 48, 48)}"/></a>
+							<div class="user-info" >
+								<a class="user-name ellipsis"  href="/users/@{qiu._2.id}/@{qiu._2.sluggedname}">@{qiu._2.name}</a>
+								<div title="@{messages("touch.karma.title")}" class="user-karma ellipsis">@{qiu._2.karma} @{messages("touch.karma.singular")}</div>
+							</div>
+						</div>
+					</li>
+				</ul>
+				<h2 class="history-title page-title">@messages("edit_form.comment.label")</h2>
+				<p class="post-text">
+					@{qiu._1.comment}
+				</p>
+			</form>
+		</div>
+		}
+	</div>
+</div>
+<script type="text/javascript">
+	//UI flags (GLOBAL VARIABLES)
+	var Globals = {};
+	Globals.inHouseUploading = true;
+	Globals.linkTo = {};
+	Globals.linkTo.uploadAttachment = "/attachments/upload";
+	Globals.linkTo.getAttachment = "/attachments/";
+	Globals.linkTo.deleteAttachment = "/attachments/";
+
+	var ANYONE_CAN_CREATE_TAGS = true;
+	var TAGS_SPLITTER_CHAR = ",";
+	var LOGGED_IN = @{user.isDefined};
+	var MODERATOR = false;
+	var KARMA = @{if(user.isDefined){user.get.karma}else{0}};
+	var CONTEXT_PATH = "";
+	var AVIARY_API_KEY = "Your aviary api key(http://www.aviary.com/web-key)";
+	var INK_API_KEY = "Your ink api key(https://developers.inkfilepicker.com/register/)";
+	var ALL_TAGS_URL = "/question/allTags";
+	var MESSAGES_LOADER_URL = "/messages/loadAll";
+</script>
+<script type="text/javascript">
+function errorPopup(text, target, clazz){
+	clazz = clazz || "";
+	if(!$(".validation-error.popup").is(":visible")) {
+		var errorPopup = $("<div class='"+ clazz +" validation-error popup close-popup'><div class='popup-error-message'>"+text+"</div><div class='subtitle'>(@messages("button_hint.click_to_close"))</div></div>");
+		errorPopup.insertAfter(target).show();
+	}
+	setTimeout(function(){
+		errorPopup.fadeOut(200, "linear", function(){errorPopup.remove();});
+	},1500);
+}
+</script>
+<script type="text/javascript">
+$(function() {
+	$('.requires-karma').each(function(index, element) {
+		var element = $(element);
+		var authorCan = !element.hasClass("author-cant");
+		var required = parseInt(element.data("karma"));
+		var isAuthor = element.data("author");
+		isAuthor = isAuthor == undefined ? false : isAuthor;
+		if (authorCan && isAuthor) {
+			return;
+		}
+		if(!MODERATOR && required > KARMA) {
+			element.off('click');
+			element.click(function(e) {
+				e.preventDefault();
+				errorPopup('@messages("need.to_have")' + " " + required + " " + '@messages("reputation_score")' + "!", this);
+			});
+		}
+	});
+	$('.author-cant').each(function(index, element) {
+		var element = $(element);
+		var isAuthor = element.data("author");
+		if(isAuthor) {
+			element.off('click');
+			element.click(function(e) {
+				e.preventDefault();
+				errorPopup('@messages("error.author.cant_realize_operation")', this);
+			});
+		}
+	});
+	if(!LOGGED_IN) {
+		$('.requires-login').off('click');
+		$('.requires-login').bind("click", function(e) {
+			e.preventDefault();
+			errorPopup('@messages("auth.requires_login")', this);
+		});
+	}
+	$('.iframe-load').click(function() {
+		var link = $(this);
+		var iframe = $("<iframe/>");
+		iframe.attr("src", link.attr("href"));
+		link.parent().html(iframe);
+	});
+	
+});
+</script>
+<script src="/assets/js/deps/diff_match_patch.js"></script>
+<script src="/assets/js/deps/prettify.js"></script>
+<script src="/assets/js/deps/pretty-text-diff.js"></script
+<script src="/assets/js/modal.js"></script>
+<script src="/assets/js/popup.js"></script>
+<script src="/assets/js/diff.js"></script>
+<script src="/assets/js/dropdown.js"></script>
+<script src="/assets/js/history-select-version.js"></script>
+<script src="/assets/js/share.js"></script>
+<script src="/assets/js/deps/Markdown.Converter.js"></script>
+<script src="/assets/js/deps/marked.js"></script>
+}

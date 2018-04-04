@@ -1,0 +1,116 @@
+@(user: Option[User], config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
+@import play.api.Play
+@import play.api.Play.current
+@import views.html.snippets._
+@import utils.RelativeTime
+@main(messages("metas.default.description",messages("site.name") + " - " + messages("metas.about.title")), user) {
+<div class="about-section">
+	<h2 class="title big-text-title">@messages("about.tips")</h2>
+	
+	<div class="big-text">
+		<p>@messages("about.tips.solved")</p>
+		<p>@messages("about.tips.avoid.thanks")</p>
+		<p>@messages("about.tips.kkk")</p>
+		<p>@messages("about.tips.greetings")</p>
+	</div>
+	
+<div class="about-section">
+	<h2 class="title big-text-title">@messages("about.reputation.permission")</h2>
+	<div class="big-text">
+		<ul class="rules-list">
+			<li>
+				@Html(messages("about.reputation.upvote", config.get[Int]("permission.rule.vote_up")))
+			</li>
+			<li>
+				@Html(messages("about.reputation.flag", config.get[Int]("permission.rule.create_flag")))
+			</li>
+			<li>
+				@Html(messages("about.reputation.edit.question", config.get[Int]("permission.rule.edit_question")))
+			</li>
+			<li>
+				@Html(messages("about.reputation.edit.answer", config.get[Int]("permission.rule.edit_answer")))
+			</li>
+			<li>
+				@Html(messages("about.reputation.answer_own_question", config.get[Int]("permission.rule.answer_own_question")))
+			</li>
+			<li>
+				@Html(messages("about.reputation.downvote", config.get[Int]("permission.rule.vote_down")))
+			</li>
+			<li>
+				@Html(messages("about.reputation.moderate", config.get[Int]("permission.rule.moderate_edits")))
+			</li>
+		</ul>
+	</div><!-- big-text -->
+</div><!-- about-section -->
+
+<div class="about-section">
+	<h2 class="title big-text-title">@messages("about.reputation.gain")</h2>
+	<div class="big-text">
+		<ul class="rules-list">
+			<li>
+				@Html(messages("about.reputation.gain.answer.solution", config.get[Int]("karma.solution_author")))
+			</li>
+			<li>
+				@Html(messages("about.reputation.gain.answer.voted_up", config.get[Int]("karma.my_answer_voted_up")))
+			</li>
+			<li>
+				@Html(messages("about.reputation.gain.question.voted_up", config.get[Int]("karma.my_question_voted_up")))
+			</li>
+			<li>
+				@Html(messages("about.reputation.gain.question.solution", config.get[Int]("karma.solved_question_author")))
+			</li>
+			<li>
+				@Html(messages("about.reputation.gain.question.answered", config.get[Int]("karma.answered_question")))
+			</li>
+			<li>
+				@Html(messages("about.reputation.gain.question.asked", config.get[Int]("karma.asked_question")))
+			</li>
+			<li>
+				@Html(messages("about.reputation.gain.approved_edit", config.get[Int]("karma.approved_information")))
+			</li>
+			<li>
+				@Html(messages("about.reputation.gain.comment.voted_up", config.get[Int]("karma.comment_voted_up")))
+			</li>
+			<li>
+				@Html(messages("about.reputation.gain.question_and_answer.voted_down", config.get[Int]("karma.my_answer_voted_down")))
+			</li>
+			<li>
+				@Html(messages("about.reputation.gain.question_and_answer.voted_down.me", config.get[Int]("karma.downvoted_question_or_answer")))
+			</li>			
+		</ul>
+	</div><!-- big-text -->
+</div><!-- about-section -->
+
+<div class="about-section">
+	<h2 class="title big-text-title" id="faq">@messages("about.reputation.faq")</h2>
+	<div class="big-text">
+		<ul class="about-faq">
+			<li>
+				<p class="about-question">@messages("about.faq.what_to_ask.question")</p>
+				<p class="about-answer">@messages("about.faq.what_to_ask.answer")</p>
+			</li>
+			<li>
+				<p class="about-question">@messages("about.faq.what_not_to_ask.question")</p>
+				<p class="about-answer">@messages("about.faq.what_not_to_ask.answer")</p>
+			</li>
+			<li>
+				<p class="about-question">@messages("about.faq.first_page_questions.question")</p>
+				<p class="about-answer">@messages("about.faq.first_page_questions.answer")</p>
+			</li>
+			<li>
+				<p class="about-question">@messages("about.faq.edition.question")</p>
+				<p class="about-answer">@messages("about.faq.edition.answer")</p>
+			</li>
+			<li>
+				<p class="about-question">@messages("about.faq.bad_question.question")</p>
+				<p class="about-answer">@messages("about.faq.bad_question.answer")</p>
+			</li>
+			<li>
+				<p id="perdi-meus-pontos" class="about-question">@messages("about.faq.where_is_my_karma")</p>
+				<p class="about-answer">@messages("about.faq.where_is_my_karma.answer")</p>
+			</li>
+		</ul>
+	</div>
+</div>
+</div>
+}
