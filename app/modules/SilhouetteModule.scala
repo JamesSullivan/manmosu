@@ -11,10 +11,12 @@ import com.mohiva.play.silhouette.api.{ Environment, EventBus, Silhouette, Silho
 import com.mohiva.play.silhouette.crypto.{ JcaCrypter, JcaCrypterSettings, JcaSigner, JcaSignerSettings }
 import com.mohiva.play.silhouette.impl.authenticators._
 import com.mohiva.play.silhouette.impl.providers._
-import com.mohiva.play.silhouette.impl.providers.oauth1._
+import com.mohiva.play.silhouette.impl.providers.oauth1.TwitterProvider
+import com.mohiva.play.silhouette.impl.providers.oauth1.XingProvider
 import com.mohiva.play.silhouette.impl.providers.oauth1.secrets.{ CookieSecretProvider, CookieSecretSettings }
 import com.mohiva.play.silhouette.impl.providers.oauth1.services.PlayOAuth1Service
 import com.mohiva.play.silhouette.impl.providers.oauth2._
+import com.mohiva.play.silhouette.impl.providers.oauth2.LinkedInProvider._
 import com.mohiva.play.silhouette.impl.providers.openid.YahooProvider
 import com.mohiva.play.silhouette.impl.providers.openid.services.PlayOpenIDService
 import com.mohiva.play.silhouette.impl.providers.state.{ CsrfStateItemHandler, CsrfStateSettings }
@@ -107,6 +109,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
    *
    * @param facebookProvider The Facebook provider implementation.
    * @param googleProvider The Google provider implementation.
+   * @param linkedinProvider The LinkedIn provider implementation.
    * @param vkProvider The VK provider implementation.
    * @param twitterProvider The Twitter provider implementation.
    * @param xingProvider The Xing provider implementation.
@@ -117,6 +120,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   def provideSocialProviderRegistry(
     facebookProvider: FacebookProvider,
     googleProvider: GoogleProvider,
+    linkedinProvider: LinkedInProvider,
     vkProvider: VKProvider,
     twitterProvider: TwitterProvider,
     xingProvider: XingProvider,
@@ -125,6 +129,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     SocialProviderRegistry(Seq(
      // googleProvider,
      // facebookProvider,
+     // linkedinProvider
      // twitterProvider,
      // vkProvider,
      // xingProvider,
@@ -376,6 +381,24 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
 
     new GoogleProvider(httpLayer, socialStateHandler, configuration.underlying.as[OAuth2Settings]("silhouette.google"))
   }
+  
+  /**
+   * Provides the LinkedIn provider.
+   *
+   * @param httpLayer The HTTP layer implementation.
+   * @param socialStateHandler The social state handler implementation.
+   * @param configuration The Play configuration.
+   * @return The LinkedIn provider.
+   */
+  @Provides
+  def provideLinkedInProvider(
+    httpLayer: HTTPLayer,
+    socialStateHandler: SocialStateHandler,
+    configuration: Configuration): LinkedInProvider = {
+
+    new LinkedInProvider(httpLayer, socialStateHandler, configuration.underlying.as[OAuth2Settings]("silhouette.linkedin"))
+  }
+
 
   /**
    * Provides the VK provider.

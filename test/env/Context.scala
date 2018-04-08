@@ -21,7 +21,7 @@ import scala.reflect.api.materializeTypeTag
      * A fake Guice module.
      */
     class FakeModule extends AbstractModule with ScalaModule {
-      def configure() = {
+      override def configure() = {
         bind[Environment[DefaultEnv]].toInstance(env)
       }
     }
@@ -65,6 +65,5 @@ import scala.reflect.api.materializeTypeTag
      */
     lazy val application = new GuiceApplicationBuilder()
       .overrides(new FakeModule)
-      .overrides(bind[MailerClient].to[MockMailerClient])
       .build()
 }

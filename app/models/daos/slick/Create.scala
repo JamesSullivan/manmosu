@@ -94,7 +94,7 @@ object Create {
 
   def tagxRow(name: String, authorId: Long) = {
     val now = Some(timeStampNow)
-    TagxRow(0L, now, None, name: String, Some(1L), Some(authorId))
+    TagxRow(0L, now, None, slugify(safeText(name)), Some(1L), Some(authorId))
   }
 
   def voteRow(voteType: String, voterId: Long) = {

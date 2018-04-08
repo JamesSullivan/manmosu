@@ -29,6 +29,8 @@ import play.api.libs.ws.WSClient
 import play.api.mvc.AbstractController
 import play.api.mvc.ControllerComponents
 import utils.auth.DefaultEnv
+import utils.Sanitizer.safeText
+import utils.Sanitizer.slugify
 
 /**
  * The basic application controller.
@@ -83,7 +85,9 @@ class QuestionController @Inject() (cc: ControllerComponents, implicit val ec: E
       {
         case (ask) =>
           val edit: Boolean = (ask.comment != "CREATED_QUESTION")
-          for (tag <- ask.tags) { Await.result(daoWrite.insertOrUpdateTagx(Create.tagxRow(tag, userID)), 30.seconds) }
+          // println("user " + userID + " editing question: " + edit)
+          val sanitizedTags = ask.tags.map(t => slugify(safeText(t)))
+          for (tag <- sanitizedTags) { Await.result(daoWrite.insertOrUpdateTagx(Create.tagxRow(tag, userID)), 30.seconds) }
           val qinformationId = Await.result(daoWrite.insertQuestioninformationRow(Create.questioninformationRow(userID, ask, request.remoteAddress, ask.comment)), 30.seconds)
           val qId: Long = if (edit) {
             Await.result(daoWrite.updateQuestionRow(Create.questionRow(ask.questionId, userID, qinformationId)), 30.seconds);
@@ -92,7 +96,7 @@ class QuestionController @Inject() (cc: ControllerComponents, implicit val ec: E
             Await.result(daoWrite.insertQuestionRow(Create.questionRow(0L, userID, qinformationId)), 30.seconds)
           }
           if (!edit) Await.result(daoWrite.updateQuestioninformationRowWithQID(qinformationId, qId), 30.seconds)
-          for ((tag, count) <- ask.tags.zipWithIndex) {
+          for ((tag, count) <- sanitizedTags.zipWithIndex) {
             val tagId = Await.result(daoRead.tagNo(tag), 30.seconds)
             tagId.map(t => Await.result(daoWrite.insertOrUpdateQuestioninformationTag(Create.questioninformationTagRow(qinformationId, t, count)), 30.seconds))
           }

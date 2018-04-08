@@ -19,11 +19,12 @@ object Photo {
       val digest: String = utils.Digester.md5(email.getOrElse(""));
       val identiURL: String = gravatarUrl + digest +"?s=" + width + "&d=identicon&r=PG"
       val roboURL: String = gravatarUrl + digest + ".png?r=PG&size=" + size + "&d=robohash"
-      return roboURL
+      identiURL
     } else if (photouri.get.contains("googleusercontent")) {
-      return photouri.get.replaceAll("sz=(\\d+)", "sz=" + width);
+      photouri.get.replaceAll("sz=(\\d+)", "sz=" + width);
     } else {
-      return photouri.get + "?width=" + width + "&height=" + height;
+      val marker =  if(photouri.get.contains("?")) "&" else "?"
+      photouri.get + marker + "width=" + width + "&height=" + height;
     }
   }
 
