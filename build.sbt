@@ -18,11 +18,11 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(ws, filters, guice)
 libraryDependencies ++= Seq(
 
-  "com.mohiva" %% "play-silhouette" % "5.0.3",
-  "com.mohiva" %% "play-silhouette-password-bcrypt" % "5.0.3",
-  "com.mohiva" %% "play-silhouette-persistence" % "5.0.3",
-  "com.mohiva" %% "play-silhouette-crypto-jca" % "5.0.3",
-  "com.mohiva" %% "play-silhouette-testkit" % "5.0.3" % "test",
+  "com.mohiva" %% "play-silhouette" % "5.0.4",
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % "5.0.4",
+  "com.mohiva" %% "play-silhouette-persistence" % "5.0.4",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "5.0.4",
+  "com.mohiva" %% "play-silhouette-testkit" % "5.0.4" % "test",
   "com.iheart" %% "ficus" % "1.4.3",
   "com.typesafe.play" % "play_2.12" % "2.6.13",
   "net.codingwell" %% "scala-guice" % "4.2.0",
