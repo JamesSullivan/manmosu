@@ -171,7 +171,7 @@ class DAORead @Inject() (protected val dbConfigProvider: DatabaseConfigProvider,
 
   @StaticDatabaseConfig("file:conf/application.conf#slick.dbs.default")
   def questionsByMatch(query: String, page: Long): Future[Seq[(Tables.QuestionRow, Tables.QuestioninformationRow, Tables.UsersRow)]] = {
-    db.run(sql"""SELECT * FROM `QuestionInformation` JOIN Question ON QuestionInformation.id = Question.information_id JOIN Users ON Question.author_id = Users.id where MATCH(title,description) AGAINST (${query}) > 0 limit #${noPerPage} offset #${((page - 1) * noPerPage)}""".
+    db.run(sql"""SELECT * FROM `QuestionInformation` JOIN Question ON QuestionInformation.id = Question.information_id JOIN Users ON Question.author_id = Users.id where Question.deleted < 1 and MATCH(title,description) AGAINST (${query}) > 0 limit #${noPerPage} offset #${((page - 1) * noPerPage)}""".
       as[((Tables.QuestioninformationRow, Tables.QuestionRow), Tables.UsersRow)]).
       map { case a: Vector[((Tables.QuestioninformationRow, Tables.QuestionRow), Tables.UsersRow)] => a.map(b => (b._1._2, b._1._1, b._2)) }
   }
