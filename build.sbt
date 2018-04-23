@@ -30,7 +30,7 @@ libraryDependencies ++= Seq(
   "org.apache.commons" % "commons-email" % "1.5",
   "javax.xml.bind" % "jaxb-api" % "2.3.0",
   "junit" % "junit" % "4.12" % "test",
-  "mysql" % "mysql-connector-java" % "8.0.8-dmr",
+  "mysql" % "mysql-connector-java" % "8.0.11",
   "org.jsoup" % "jsoup" % "1.11.3",
   "org.scalatest" %% "scalatest" % "3.0.5" % "test",
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
