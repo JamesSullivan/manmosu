@@ -22,6 +22,8 @@ object Photo {
       identiURL
     } else if (photouri.get.contains("googleusercontent")) {
       photouri.get.replaceAll("sz=(\\d+)", "sz=" + width);
+    } else if (photouri.get.contains("facebook.com/")) {
+      photouri.get
     } else {
       val marker =  if(photouri.get.contains("?")) "&" else "?"
       photouri.get + marker + "width=" + width + "&height=" + height;
