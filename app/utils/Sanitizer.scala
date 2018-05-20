@@ -7,7 +7,7 @@ object Sanitizer {
 
   def safeText(input: String) = Jsoup.parse(input).text()
 
-  def safeHTML(unsafe: String) = Jsoup.clean(unsafe, Whitelist.basic())
+  def safeHTML(unsafe: String) = Jsoup.clean(unsafe, Whitelist.relaxed())
 
   def slugify(input: String): String = {
     import java.text.Normalizer

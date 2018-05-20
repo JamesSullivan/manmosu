@@ -75,7 +75,7 @@ class ApplicationController @Inject() (cc: ControllerComponents, implicit val ec
       val questionId: Long = if (edit) Await.result(daoRead.questionIdByAnswerId(id), 30.seconds).get else id
       val watch = Await.result(daoRead.watchesByQuestionUserId(questionId, Some(userID)), 30.seconds)
       val answerUser = Await.result(daoRead.answerUser(answerId), 30.seconds).map(ar => AnswerUser.tupled(ar)).get
-      AnswerForm.Answer(watch, answerUser.informationRow.description, "", id, questionId)
+      AnswerForm.Answer(watch, answerUser.informationRow.markeddescription.getOrElse(""), "", id, questionId)
     }
     val attachments = if (answerId < 1) Seq[models.daos.slick.Tables.AttachmentRow]() else Await.result(daoRead.attachmentsByAnswerId(answerId), 30.seconds)
     val answerData = answerForm.form.fill(formData)
