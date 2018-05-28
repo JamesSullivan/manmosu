@@ -1,6 +1,5 @@
 // The Play plugin
 resolvers += "Typesafe repository" at "https://dl.bintray.com/typesafe/maven-releases/"
 
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.6.13")
-
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.6.15")
 
