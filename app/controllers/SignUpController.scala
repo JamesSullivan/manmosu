@@ -2,6 +2,11 @@ package controllers
 
 import java.time.LocalDateTime
 
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
+
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.Silhouette
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
@@ -13,7 +18,6 @@ import com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry
 import forms.SignUpForm
 import javax.inject.Inject
 import models.Account
-import models.Account.Admin
 import models.User
 import models.services.AuthTokenService
 import models.services.UserService
@@ -22,13 +26,8 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.i18n.Messages
 import play.api.libs.ws.WSClient
-import play.api.libs.ws.WSResponse
 import play.api.mvc.AbstractController
 import play.api.mvc.ControllerComponents
-import scala.concurrent.Await
-import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext 
-import scala.concurrent.Future
 import utils.MailService
 import utils.Sanitizer.safeText
 import utils.Sanitizer.slugify
