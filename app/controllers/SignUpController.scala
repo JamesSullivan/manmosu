@@ -2,9 +2,6 @@ package controllers
 
 import java.time.LocalDateTime
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.Silhouette
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
@@ -24,8 +21,14 @@ import play.api.Configuration
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.i18n.Messages
+import play.api.libs.ws.WSClient
+import play.api.libs.ws.WSResponse
 import play.api.mvc.AbstractController
 import play.api.mvc.ControllerComponents
+import scala.concurrent.Await
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext 
+import scala.concurrent.Future
 import utils.MailService
 import utils.Sanitizer.safeText
 import utils.Sanitizer.slugify
@@ -43,6 +46,7 @@ import utils.auth.DefaultEnv
  */
 class SignUpController @Inject() (
   components: ControllerComponents,
+  ws: WSClient,
   socialProviderRegistry: SocialProviderRegistry,
   config: Configuration,
   silhouette: Silhouette[DefaultEnv],
@@ -57,6 +61,8 @@ class SignUpController @Inject() (
   ex: ExecutionContext)
   extends AbstractController(components) with I18nSupport {
 
+  val google_datasitekey = config.get[String]("google.datasitekey")
+  val google_secret = config.get[String]("google.secret")
   val emailsignup = config.get[Boolean]("feature.emailsignup")
   val mailService = new MailService(config)
 
@@ -66,7 +72,7 @@ class SignUpController @Inject() (
    * @return The result to display.
    */
   def view = silhouette.UserAwareAction.async { implicit request =>
-    Future.successful(Ok(views.html.signUp(SignUpForm.form, request.identity.getOrElse(null), socialProviderRegistry)))
+    Future.successful(Ok(views.html.signUp(SignUpForm.form, request.identity.getOrElse(null), socialProviderRegistry, google_datasitekey)))
   }
 
   /**
@@ -75,10 +81,20 @@ class SignUpController @Inject() (
    * @return The result to display.
    */
   def submit = silhouette.UserAwareAction.async { implicit request =>
-    Logger.info("attempt to add new user")
+    Logger.info("attempt to add new user from " + request.remoteAddress)
     SignUpForm.form.bindFromRequest.fold(
-      formWithErrors => Future.successful(BadRequest(views.html.signUp(formWithErrors, request.identity.getOrElse(null), socialProviderRegistry))),
+      formWithErrors => Future.successful(BadRequest(views.html.signUp(formWithErrors, request.identity.getOrElse(null), socialProviderRegistry, google_datasitekey))),
       data => {
+        val googleResponse: String = if(google_datasitekey.length < 1 || google_secret.length < 1) {
+          "true,"
+        } else {
+          Await.result(ws.url("https://www.google.com/recaptcha/api/siteverify")
+          .post(Map("secret" -> Seq(google_secret),"response" -> Seq(data.grecaptcharesponse),"remoteip" -> Seq(request.remoteAddress))), 30.seconds).body.toString
+        }
+        if(!googleResponse.contains("true,")){
+          Logger.warn("Possible robo signup attempt " + googleResponse)
+          Future.successful(Redirect(routes.SignUpController.view()).flashing("error" -> Messages("You could be a robot. Please select not a Robot." )))
+        } else {
         val loginInfo = LoginInfo("BRUTAL", data.email)
         userService.retrieve(loginInfo).flatMap {
           case Some(user) =>
@@ -134,6 +150,7 @@ class SignUpController @Inject() (
               }
             }
         }
+      }
       })
   }
 

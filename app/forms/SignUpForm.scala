@@ -4,6 +4,7 @@ import play.api.data.Form
 import play.api.data.Forms.email
 import play.api.data.Forms.mapping
 import play.api.data.Forms.nonEmptyText
+import play.api.data.Forms.text
 
 /**
  * The form which handles the sign up process.
@@ -17,7 +18,8 @@ object SignUpForm {
     mapping(
       "name" -> nonEmptyText,
       "email" -> email,
-      "password" -> nonEmptyText)(Data.apply)(Data.unapply))
+      "password" -> nonEmptyText,
+      "g-recaptcha-response" -> text)(Data.apply)(Data.unapply))
 
   /**
    * The form data.
@@ -29,5 +31,6 @@ object SignUpForm {
   case class Data(
     name: String,
     email: String,
-    password: String)
+    password: String,
+    grecaptcharesponse: String)
 }
