@@ -24,7 +24,7 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette-crypto-jca" % "5.0.5",
   "com.mohiva" %% "play-silhouette-testkit" % "5.0.5" % "test",
   "com.iheart" %% "ficus" % "1.4.3",
-  "com.typesafe.play" % "play_2.12" % "2.6.16",
+  "com.typesafe.play" % "play_2.12" % "2.6.17",
   "net.codingwell" %% "scala-guice" % "4.2.1",
   "com.typesafe.play" % "play-slick_2.12" % "3.0.3",
   "org.apache.commons" % "commons-email" % "1.5",
