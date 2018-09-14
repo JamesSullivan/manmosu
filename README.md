@@ -35,7 +35,7 @@ New Users
 ---------- 
 
 Set up a new database (script is for Linux bash but is simple enough to follow manually for other OSes).
-You will need to input your MySQL database password.
+You will need to input your MySQL database password if set up. If you are on Ubuntu 18.04 you should remove the -p from the second line of the script and run it as root.
 ```
 chmod o+x ./setupdb.sh
 ./setupdb.sh

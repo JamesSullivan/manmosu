@@ -1,6 +1,5 @@
 #!/bin/bash
-
-mysql -uroot <<MYSQL_SCRIPT
+mysql -uroot -p <<MYSQL_SCRIPT
 CREATE DATABASE IF NOT EXISTS manmosu DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
 CREATE USER 'manmosu_user'@'localhost' IDENTIFIED BY 'manmosuPW1!';
 GRANT ALL PRIVILEGES ON manmosu.* TO 'manmosu_user'@'localhost' IDENTIFIED BY 'manmosuPW1!';
