@@ -35,7 +35,6 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.0.5" % "test",
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
   "org.webjars" %% "webjars-play" % "2.6.3",
-  // "com.adrianhurt" %% "play-bootstrap" % "1.2-P26-B4-SNAPSHOT",
   "com.typesafe.play" %% "play-mailer" % "6.0.1",
   "com.typesafe.play" %% "play-mailer-guice" % "6.0.1",
   "es.nitaur.markdown" % "txtmark" % "0.16",

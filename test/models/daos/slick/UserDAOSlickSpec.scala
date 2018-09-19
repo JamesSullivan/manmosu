@@ -32,13 +32,13 @@ import slick.jdbc.MySQLProfile.api._
 
 
 /**
- * @author sullija
+ * 
  */
 class UserDAOSlickSpec @Inject()(userDAOSlick: models.daos.slick.UserDAOSlick) extends PlaySpec with GuiceOneServerPerSuite with env.Context {
 
   "A slickLoginInfos join slickUserLoginInfos" should {
     "return some ids" in {
-      Await.result(userDAOSlick.find(new LoginInfo("credentials", "brianm24@outlook.com")), Duration.Inf).get.name mustBe Some("Brian McManus")
+      Await.result(userDAOSlick.find(new LoginInfo("credentials", "moderator@mamuteqa.org")), Duration.Inf).get.name mustBe Some("moderator")
     }
   }
 
