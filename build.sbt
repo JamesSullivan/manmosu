@@ -3,7 +3,7 @@ name := "manmosu"
 
 version := "0.0.1"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.8"
 
 routesGenerator := InjectedRoutesGenerator
 
@@ -18,19 +18,19 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(ws, filters, guice)
 libraryDependencies ++= Seq(
 
-  "com.mohiva" %% "play-silhouette" % "5.0.5",
-  "com.mohiva" %% "play-silhouette-password-bcrypt" % "5.0.5",
-  "com.mohiva" %% "play-silhouette-persistence" % "5.0.5",
-  "com.mohiva" %% "play-silhouette-crypto-jca" % "5.0.5",
-  "com.mohiva" %% "play-silhouette-testkit" % "5.0.5" % "test",
-  "com.iheart" %% "ficus" % "1.4.3",
-  "com.typesafe.play" % "play_2.12" % "2.6.19",
+  "com.mohiva" %% "play-silhouette" % "5.0.6",
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % "5.0.6",
+  "com.mohiva" %% "play-silhouette-persistence" % "5.0.6",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "5.0.6",
+  "com.mohiva" %% "play-silhouette-testkit" % "5.0.6" % "test",
+  "com.iheart" %% "ficus" % "1.4.4",
+  "com.typesafe.play" % "play_2.12" % "2.6.20",
   "net.codingwell" %% "scala-guice" % "4.2.1",
   "com.typesafe.play" % "play-slick_2.12" % "3.0.3",
   "org.apache.commons" % "commons-email" % "1.5",
-  "javax.xml.bind" % "jaxb-api" % "2.3.0",
+  "javax.xml.bind" % "jaxb-api" % "2.3.1",
   "junit" % "junit" % "4.12" % "test",
-  "mysql" % "mysql-connector-java" % "8.0.12",
+  "mysql" % "mysql-connector-java" % "8.0.13",
   "org.jsoup" % "jsoup" % "1.11.3",
   "org.scalatest" %% "scalatest" % "3.0.5" % "test",
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
