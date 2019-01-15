@@ -88,4 +88,4 @@ play.mailer {
 
 If you want to require new users to confirm by E-mail change `feature.emailsignup=false` to true
 
-To allow social logins such as Facebook, Google, etc. change from line 126 of app/modules/SilhouetteModule.scala as well as adding credentials to the conf/silhouette.conf cconfiguration file.
+To allow social logins such as Facebook, Google, etc. change from line 151 of app/modules/SilhouetteModule.scala as well as adding credentials to the conf/silhouette.conf cconfiguration file.

@@ -17,7 +17,7 @@ resolvers ++= Seq(
   
 libraryDependencies ++= Seq(ws, filters, guice)
 libraryDependencies ++= Seq(
-
+  "org.apache.commons" % "commons-lang3" % "3.8.1",  // needed for play-silhouette to work on Java 10
   "com.mohiva" %% "play-silhouette" % "5.0.7",
   "com.mohiva" %% "play-silhouette-password-bcrypt" % "5.0.7",
   "com.mohiva" %% "play-silhouette-persistence" % "5.0.7",
