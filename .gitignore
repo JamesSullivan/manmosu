@@ -4,6 +4,7 @@ dist
 log
 logs
 npm-debug.log
+project/.bloop
 project/project
 project/target
 target
@@ -13,9 +14,11 @@ RUNNING_PID
 .cache-tests
 .classpath
 .history
+/.bloop
 /.idea
 /*.iml
 /.idea_modules
+/.metals
 /.settings
 /build/
 /nbproject/private
@@ -27,3 +30,4 @@ manifest.mf
 genfiles.properties
 build.xml
 build-impl.xml
+

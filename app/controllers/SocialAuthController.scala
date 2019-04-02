@@ -9,6 +9,7 @@ import com.mohiva.play.silhouette.api.exceptions.ProviderException
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.impl.providers.CommonSocialProfileBuilder
 import com.mohiva.play.silhouette.impl.providers.SocialProvider
+import com.mohiva.play.silhouette.impl.providers.OAuth2Provider
 import com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry
 
 import javax.inject.Inject
@@ -48,7 +49,7 @@ class SocialAuthController @Inject() (
     val realProvider = if (provider == "BRUTAL") "credential" else provider
     Logger.info("SocialAuthController " + realProvider)
     (socialProviderRegistry.get[SocialProvider](realProvider) match {
-      case Some(p: SocialProvider with CommonSocialProfileBuilder) =>
+      case Some(p: OAuth2Provider with CommonSocialProfileBuilder) =>
       Logger.debug("Social authenticate request.uri: " + request.uri)
         p.authenticate().flatMap {
           case Left(result) => Future.successful(result)

@@ -98,7 +98,7 @@ class AttachmentController @Inject() (cc: ControllerComponents, implicit val ec:
   val system = akka.actor.ActorSystem()
   implicit val materializer = ActorMaterializer()(system)
 
-  def upload = silhouette.SecuredAction.async(this.parse.maxLength(30 * 1024 * 1024, parse.multipartFormData)) { implicit request =>
+  def upload = silhouette.SecuredAction.async(this.parse.maxLength(30L * 1024L * 1024L, parse.multipartFormData)) { implicit request =>
     def show = Future.successful(request.body match {
       case Left(maxSizeExceeded) => Ok("The size of your file(s) is too large, we accept just " + maxSizeExceeded.length + " bytes at a time!")
       case Right(multipartForm) => {
