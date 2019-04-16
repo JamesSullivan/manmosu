@@ -22,7 +22,7 @@ import models.User
 import models.services.AuthTokenService
 import models.services.UserService
 import play.api.Configuration
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.i18n.Messages
 import play.api.libs.ws.WSClient
@@ -58,7 +58,7 @@ class SignUpController @Inject() (
   userDAOSlick: models.daos.slick.UserDAOSlick)(
   implicit
   ex: ExecutionContext)
-  extends AbstractController(components) with I18nSupport {
+  extends AbstractController(components) with I18nSupport with Logging {
 
   val google_datasitekey = config.get[String]("google.datasitekey")
   val google_secret = config.get[String]("google.secret")
@@ -80,7 +80,7 @@ class SignUpController @Inject() (
    * @return The result to display.
    */
   def submit = silhouette.UserAwareAction.async { implicit request =>
-    Logger.info("attempt to add new user from " + request.remoteAddress)
+    logger.info("attempt to add new user from " + request.remoteAddress)
     SignUpForm.form.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(views.html.signUp(formWithErrors, request.identity.getOrElse(null), socialProviderRegistry, google_datasitekey))),
       data => {
@@ -91,13 +91,13 @@ class SignUpController @Inject() (
           .post(Map("secret" -> Seq(google_secret),"response" -> Seq(data.grecaptcharesponse),"remoteip" -> Seq(request.remoteAddress))), 30.seconds).body.toString
         }
         if(!googleResponse.contains("true,")){
-          Logger.warn("Possible robo signup attempt " + googleResponse)
+          logger.warn("Possible robo signup attempt " + googleResponse)
           Future.successful(Redirect(routes.SignUpController.view()).flashing("error" -> Messages("You could be a robot. Please select not a Robot." )))
         } else {
         val loginInfo = LoginInfo("BRUTAL", data.email)
         userService.retrieve(loginInfo).flatMap {
           case Some(user) =>
-            Logger.warn(data.email + "\ttrying to add already existing account")
+            logger.warn(data.email + "\ttrying to add already existing account")
             val url = routes.SignInController.signIn("").absoluteURL()
             mailService.sendEmailAsync(data.email)(Messages("email.already.signed.up.subject"), views.html.emails.alreadySignedUp(user, url).body, views.txt.emails.alreadySignedUp(user, url).body);
             if(user.deleted){
@@ -107,7 +107,7 @@ class SignUpController @Inject() (
             }
           case None =>
             val hashedAuthInfo = passwordHasher.hash(data.password)
-            Logger.info(data.email + "\tStarting to add new account")
+            logger.info(data.email + "\tStarting to add new account")
             val name = safeText(data.name)
             val user = User(
               0,

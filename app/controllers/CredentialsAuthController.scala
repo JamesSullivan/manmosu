@@ -18,7 +18,7 @@ import org.webjars.play.WebJarsUtil
 import play.api.mvc.{ AbstractController, ControllerComponents }
 import play.api.Configuration
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.Logger
+import play.api.Logging
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -46,7 +46,7 @@ class CredentialsAuthController @Inject() (
   config: Configuration,
   clock: Clock)(
   implicit
-  webJarsUtil: WebJarsUtil) extends AbstractController(cc) with I18nSupport {
+  webJarsUtil: WebJarsUtil) extends AbstractController(cc) with I18nSupport with Logging {
 
   val emailsignup = config.get[Boolean]("feature.emailsignup")
 
@@ -60,9 +60,9 @@ class CredentialsAuthController @Inject() (
       form => Future.successful(BadRequest(views.html.signIn(form, socialProviderRegistry))),
       data => {
         val credentials = Credentials(data.email, data.password)
-        Logger.info(credentials.identifier + "\tCAC credentials")
+        logger.info(credentials.identifier + "\tCAC credentials")
         credentialsProvider.authenticate(credentials).flatMap { loginInfo =>
-          Logger.info(loginInfo.providerKey + "\tCAC loginInfo " + loginInfo.providerID)
+          logger.info(loginInfo.providerKey + "\tCAC loginInfo " + loginInfo.providerID)
           val loginInfo2 = loginInfo.copy(providerID = "BRUTAL")
           //println("CAC authenticate request.uri: " + request.uri)
           //println("CAC authenticate data.originaluri: " + data.originaluri )
@@ -97,7 +97,7 @@ class CredentialsAuthController @Inject() (
         }
       }.recover {
         case e: ProviderException =>
-          Logger.info(data.email + "\tLogin failed using " + data.password);
+          logger.info(data.email + "\tLogin failed using " + data.password);
           Redirect(routes.SignInController.signIn("")).flashing("error" -> (Messages("invalid.credentials") + "  " + e.getMessage))
       })
   }

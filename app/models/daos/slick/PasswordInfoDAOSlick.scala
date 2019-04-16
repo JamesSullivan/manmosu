@@ -11,14 +11,14 @@ import com.mohiva.play.silhouette.api.util.PasswordInfo
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 
 import javax.inject.Inject
-import play.api.Logger
+import play.api.Logging
 import play.api.db.slick.DatabaseConfigProvider
 
 /**
  * The DAO to store the password information.
  */
 class PasswordInfoDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit val ec: ExecutionContext)
-    extends DelegableAuthInfoDAO[PasswordInfo] with DAOSlick {
+    extends DelegableAuthInfoDAO[PasswordInfo] with DAOSlick with Logging {
   import slick.jdbc.MySQLProfile.api._
   
   /**
@@ -30,17 +30,17 @@ class PasswordInfoDAOSlick @Inject() (protected val dbConfigProvider: DatabaseCo
    */
 
   def save(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = {
-    Logger.info("PasswordInfoDAOSlick saving: ")
-    Logger.info("  authInfo: " + authInfo)
-    Logger.info("  loginInfo: " + loginInfo)
+    logger.info("PasswordInfoDAOSlick saving: ")
+    logger.info("  authInfo: " + authInfo)
+    logger.info("  loginInfo: " + loginInfo)
     val query = slickLoginInfos.filter(x => x.providerID === loginInfo.providerID && x.providerKey === loginInfo.providerKey)
     val old: Future[Option[DBLoginInfo]] = db.run(query.result.headOption)
     old.andThen { 
       case Success(oldDbLoginInfo: Option[DBLoginInfo]) if(oldDbLoginInfo.isDefined) => 
-        Logger.info("oldDbLoginfo: " + oldDbLoginInfo)
+        logger.info("oldDbLoginfo: " + oldDbLoginInfo)
         db.run(query.update(DBLoginInfo(oldDbLoginInfo.get.id, loginInfo.providerID, loginInfo.providerKey, authInfo.password, oldDbLoginInfo.get.user_id)))
       case _  =>
-        Logger.info("newDbLoginfo: ")
+        logger.info("newDbLoginfo: ")
         db.run(slickUsers.filter(_.email === loginInfo.providerKey).result.headOption) onComplete {
           case Success(Some(dbuser)) if(dbuser.userID.isDefined) => db.run(query.insertOrUpdate(DBLoginInfo(None, loginInfo.providerID, loginInfo.providerKey, authInfo.password, dbuser.userID.get)))
         }
@@ -77,14 +77,14 @@ class PasswordInfoDAOSlick @Inject() (protected val dbConfigProvider: DatabaseCo
    * @return The retrieved password info or None if no password info could be retrieved for the given login info.
    */
   def find(loginInfo: LoginInfo): Future[Option[PasswordInfo]] = {
-    Logger.info("PasswordInfoDAOSlick.find: " + loginInfo.providerID + "  " + loginInfo.providerKey)
+    logger.info("PasswordInfoDAOSlick.find: " + loginInfo.providerID + "  " + loginInfo.providerKey)
     val providerID = if(loginInfo.providerID.equalsIgnoreCase("credentials")) "BRUTAL" else loginInfo.providerID
     db.run(slickLoginInfos.filter(info => info.providerID === providerID && info.providerKey === loginInfo.providerKey).result.headOption.map {
       _ match {
           case Some(info) =>
-            Logger.info("\tinfo.id: " + info.id)
+            logger.info("\tinfo.id: " + info.id)
             val passwordInfo = Await.result(db.run(slickPasswordInfos.filter(_.loginInfoId === info.id).result.head), Duration.Inf)
-            Logger.info("\tpasswordInfo.loginInfoId: " + passwordInfo.loginInfoId + "\t" + passwordInfo.hasher)
+            logger.info("\tpasswordInfo.loginInfoId: " + passwordInfo.loginInfoId + "\t" + passwordInfo.hasher)
             Some(PasswordInfo(passwordInfo.hasher, passwordInfo.password, passwordInfo.salt))
           case None => None
         }

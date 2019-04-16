@@ -20,7 +20,7 @@ import javax.inject.Inject
 import models.services.UserService
 import net.ceedubs.ficus.Ficus._
 import play.api.Configuration
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.i18n.Messages
 import play.api.mvc.AbstractController
@@ -54,7 +54,7 @@ class SignInController @Inject() (
 )(
   implicit
   ex: ExecutionContext
-) extends AbstractController(components) with I18nSupport {
+) extends AbstractController(components) with I18nSupport with Logging{
 
 
   
@@ -78,13 +78,13 @@ class SignInController @Inject() (
     request.identity match {
      // case Some(user) if(user.account.id > 0) =>
       case Some(user) =>
-        Logger.info(user.email.getOrElse("") + "\t" + "logged in from " + request.remoteAddress + "\t" + request.headers.get("User-Agent").getOrElse("No User-Agent"))
+        logger.info(user.email.getOrElse("") + "\t" + "logged in from " + request.remoteAddress + "\t" + request.headers.get("User-Agent").getOrElse("No User-Agent"))
         Future.successful(Redirect(routes.ApplicationController.index("")))
     //  case Some(user) if(user.account.id < 1 && request.flash.isEmpty) =>
-    //    Logger.info(user.email.getOrElse("") + "\t" + "unactivated user from " + request.remoteAddress + "\t" + request.headers.get("User-Agent").getOrElse("No User-Agent"))
+    //    logger.info(user.email.getOrElse("") + "\t" + "unactivated user from " + request.remoteAddress + "\t" + request.headers.get("User-Agent").getOrElse("No User-Agent"))
     //    Future.successful(Ok(views.html.activateAccount(user.email.getOrElse(""))))
       case _ =>
-        Logger.info("      " + "\t" + "login attempt from " + request.remoteAddress + "\t" + request.headers.get("User-Agent").getOrElse("No User-Agent"))
+        logger.info("      " + "\t" + "login attempt from " + request.remoteAddress + "\t" + request.headers.get("User-Agent").getOrElse("No User-Agent"))
         Future.successful(Ok(views.html.signIn(SignInForm.form, socialProviderRegistry)))
     }
   }
@@ -96,7 +96,7 @@ class SignInController @Inject() (
    */
   def signOut = silhouette.SecuredAction.async { implicit request =>
     val result = Redirect(routes.ApplicationController.index(""))
-    Logger.info(request.identity.email.getOrElse("Unidentified") + "\tsigning out\t")
+    logger.info(request.identity.email.getOrElse("Unidentified") + "\tsigning out\t")
     silhouette.SecuredRequestHandler.environment.eventBus.publish(LogoutEvent(request.identity, request))
     silhouette.SecuredRequestHandler.environment.authenticatorService.discard(request.authenticator, result)
   }

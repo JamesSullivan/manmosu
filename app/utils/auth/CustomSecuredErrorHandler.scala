@@ -6,7 +6,7 @@ import com.mohiva.play.silhouette.api.actions.SecuredErrorHandler
 import play.api.http.DefaultHttpErrorHandler
 import controllers.routes
 import play.api.Environment
-import play.api.Logger
+import play.api.Logging
 import play.api.routing.Router
 import play.api.mvc.Results._
 import play.api.mvc.RequestHeader
@@ -23,7 +23,7 @@ class CustomSecuredErrorHandler @Inject() (
   sourceMapper: OptionalSourceMapper,
   router: Provider[Router])
   extends DefaultHttpErrorHandler(env, config, sourceMapper, router)
-  with SecuredErrorHandler {
+  with SecuredErrorHandler with Logging {
 
   /**
    * Called when a user is not authenticated.
@@ -35,7 +35,7 @@ class CustomSecuredErrorHandler @Inject() (
    * @return The result to send to the client.
    */
   override def onNotAuthenticated(implicit request: RequestHeader) = {
-    Logger.warn("CustomSecuredErrorHandler onNotAuthenticated uri: " + request.uri)
+    logger.warn("CustomSecuredErrorHandler onNotAuthenticated uri: " + request.uri)
     Future.successful(Redirect(routes.SignInController.signIn("") + request.uri))
   }
 

@@ -17,7 +17,7 @@ import javax.inject.Inject
 import models.daos.slick.PasswordInfoDAOSlick
 import models.services.AuthTokenService
 import models.services.UserService
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.i18n.Messages
 import play.api.mvc.AbstractController
@@ -51,7 +51,7 @@ class ResetPasswordController @Inject() (
   passwordInfoDAOSlick: PasswordInfoDAOSlick)(
   implicit
   webJarsUtil: WebJarsUtil,
-  ex: ExecutionContext) extends AbstractController(components) with I18nSupport {
+  ex: ExecutionContext) extends AbstractController(components) with I18nSupport with Logging {
 
   /**
    * Views the `Reset Password` page.
@@ -74,14 +74,14 @@ class ResetPasswordController @Inject() (
    * @return The result to display.
    */
   def submit(token: Long) = silhouette.UnsecuredAction.async { implicit request: Request[AnyContent] =>
-    Logger.info("starting to reset password for " + token)
+    logger.info("starting to reset password for " + token)
     authTokenService.validate(token).flatMap {
       case Some(authToken) =>
         ResetPasswordForm.form.bindFromRequest.fold(
           form => Future.successful(BadRequest(views.html.resetPassword(form, token))),
           password => userService.retrieve(authToken.userID).flatMap {
             case Some(user) =>
-              Logger.info(user.email.getOrElse("") + "\t resetting password" + token)
+              logger.info(user.email.getOrElse("") + "\t resetting password" + token)
               val passwordInfo = passwordHasher.hash(password)
               println("passwordInfo: " + passwordInfo)
               val loginInfo = LoginInfo("BRUTAL", user.email.getOrElse(""))
@@ -91,7 +91,7 @@ class ResetPasswordController @Inject() (
               }
               Future.successful(Redirect(routes.SignInController.signIn("")).flashing("success" -> Messages("password.reset")))
             case _ =>
-              Logger.info("Not matching for reset " + token)
+              logger.info("Not matching for reset " + token)
               Future.successful(Redirect(routes.SignInController.signIn("")).flashing("error" -> Messages("invalid.reset.link")))
           })
       case None => Future.successful(Redirect(routes.SignInController.signIn("")).flashing("error" -> Messages("invalid.reset.link")))

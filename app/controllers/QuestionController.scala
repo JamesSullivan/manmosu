@@ -21,7 +21,7 @@ import models.daos.slick.DAOWrite
 import models.daos.slick.QA
 import models.services.UserService
 import play.api.Configuration
-import play.api.Logger
+import play.api.Logging
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.I18nSupport
 import play.api.i18n.Messages
@@ -43,7 +43,7 @@ import utils.Sanitizer.slugify
  */
 class QuestionController @Inject() (cc: ControllerComponents, implicit val ec: ExecutionContext, ws: WSClient,
   config: Configuration, dbConfigProvider: DatabaseConfigProvider, userService: UserService, socialProviderRegistry: SocialProviderRegistry,
-  silhouette: Silhouette[DefaultEnv]) extends AbstractController(cc) with I18nSupport {
+  silhouette: Silhouette[DefaultEnv]) extends AbstractController(cc) with I18nSupport with Logging {
 
   val daoRead = new DAORead(dbConfigProvider, config)
   val daoWrite = new DAOWrite(dbConfigProvider, config)
@@ -139,14 +139,14 @@ class QuestionController @Inject() (cc: ControllerComponents, implicit val ec: E
     val karmaAmount = if (up) my_question_voted_up else my_question_voted_down
     val karmaType = if (up) "QUESTION_UPVOTE" else "QUESTION_DOWNVOTE"
     val q = Await.result(daoRead.questionUser(number), 30.seconds).map(q => QuestionUser.tupled(q))
-    Logger.info("userID: " + userID + " " + karmaType + " for " +userID)
+    logger.info("userID: " + userID + " " + karmaType + " for " +userID)
     if (q.get.authorsRow.id == userID) {
       Future.successful(Conflict("vote.ownquestion"))
     } else {
       val vote = Await.result(daoRead.voteByQuestionVoter(number, userID), 30.seconds) // Option[(questionVotesRow, voteRow)]
       val oldVoteType = if (vote.isEmpty) "" else vote.get._2.`type`.getOrElse("")
       if (vote.isEmpty) {
-        Logger.debug("\tvote was empty")
+        logger.debug("\tvote was empty")
         Await.result(daoWrite.insertQuestionVoteRow(number, Create.voteRow(direction.toUpperCase(), userID)), 30.seconds)
         Await.result(daoWrite.incrementQuestionVotes(q.get.row.id, voteDirection), 30.seconds)
         Await.result(daoWrite.insertReputationeventRow(Create.reputationeventRow(q.get.row.id, karmaAmount, karmaType, q.get.row.authorId)), 30.seconds)
@@ -155,7 +155,7 @@ class QuestionController @Inject() (cc: ControllerComponents, implicit val ec: E
         } // add reputation events
         Future.successful(Ok((q.get.row.votecount + voteDirection).toString))
       } else if (oldVoteType == direction.toUpperCase()) { // same again so remove
-        Logger.debug("\tsame again so remove")
+        logger.debug("\tsame again so remove")
         Await.result(daoWrite.removeQuestionVoteRow(number, userID), 30.seconds)
         Await.result(daoWrite.incrementQuestionVotes(q.get.row.id, (voteDirection * -1)), 30.seconds)
         Await.result(daoWrite.removeReputationeventRow(Create.reputationeventRow(q.get.row.id, karmaAmount, karmaType, q.get.row.authorId)), 30.seconds)
@@ -164,7 +164,7 @@ class QuestionController @Inject() (cc: ControllerComponents, implicit val ec: E
         }
         Future.successful(Ok((q.get.row.votecount + (voteDirection * -1)).toString))
       } else if ((voteDirection == 1 && oldVoteType.equals("DOWN")) || (voteDirection == -1 && oldVoteType.equals("UP"))) {
-        Logger.debug("\tchange vote to opposite")
+        logger.debug("\tchange vote to opposite")
         val voteChange = voteDirection * 2
         val karmaChange = (my_question_voted_up - my_question_voted_down) * voteDirection
         val oldType = if (!up) "QUESTION_UPVOTE" else "QUESTION_DOWNVOTE"

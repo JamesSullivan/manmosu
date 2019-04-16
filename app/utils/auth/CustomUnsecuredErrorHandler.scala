@@ -4,14 +4,14 @@ import scala.concurrent.Future
 
 import com.mohiva.play.silhouette.api.actions.UnsecuredErrorHandler
 
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.RequestHeader
 import play.api.mvc.Results.Redirect
 
 /**
  * Custom unsecured error handler.
  */
-class CustomUnsecuredErrorHandler extends UnsecuredErrorHandler {
+class CustomUnsecuredErrorHandler extends UnsecuredErrorHandler with Logging {
 
   /**
    * Called when a user is authenticated but not authorized.
@@ -22,7 +22,7 @@ class CustomUnsecuredErrorHandler extends UnsecuredErrorHandler {
    * @return The result to send to the client.
    */
   override def onNotAuthorized(implicit request: RequestHeader) = {
-    Logger.warn("CustomUnSecuredErrorHandler onNotAuthorized uri: " + request.uri)
+    logger.warn("CustomUnSecuredErrorHandler onNotAuthorized uri: " + request.uri)
     Future.successful(Redirect(controllers.routes.ApplicationController.index("")))
   }
 }

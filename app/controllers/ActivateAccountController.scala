@@ -13,7 +13,7 @@ import javax.inject.Inject
 import models.services.AuthTokenService
 import models.services.UserService
 import play.api.Configuration
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.i18n.Messages
 import play.api.libs.mailer.MailerClient
@@ -43,7 +43,7 @@ class ActivateAccountController @Inject() (
   mailerClient: MailerClient,
   userDAOSlick: models.daos.slick.UserDAOSlick)(
   implicit
-  ex: ExecutionContext) extends AbstractController(components) with I18nSupport {
+  ex: ExecutionContext) extends AbstractController(components) with I18nSupport with Logging {
 
   val mailService = new MailService(config)
   /**
@@ -56,17 +56,17 @@ class ActivateAccountController @Inject() (
     val decodedEmail = URLDecoder.decode(email, "UTF-8")
     val loginInfo = LoginInfo(CredentialsProvider.ID, decodedEmail)
     val result = Redirect(routes.SignInController.signIn("")).flashing("info" -> Messages("activation.email.sent", decodedEmail))
-    Logger.info("send loginInfo: " + loginInfo)
+    logger.info("send loginInfo: " + loginInfo)
     userService.retrieve(loginInfo).flatMap {
       case Some(user) if user.account.id < 1 =>
-        Logger.info(user.email.getOrElse("") + "\t sending activation E-mail")
+        logger.info(user.email.getOrElse("") + "\t sending activation E-mail")
         authTokenService.create(user.userID).map { authToken =>
           val url = routes.ActivateAccountController.activate(authToken.id).absoluteURL()
           mailService.sendEmailAsync(decodedEmail)(Messages("email.activate.account.subject"), views.html.emails.activateAccount(user, url).body, views.txt.emails.activateAccount(user, url).body);
           result
         }
       case None =>
-        Logger.info(loginInfo + "\t unable to send activation E-mail")
+        logger.info(loginInfo + "\t unable to send activation E-mail")
         Future.successful(result)
     }
   }
@@ -82,12 +82,12 @@ class ActivateAccountController @Inject() (
     authTokenService.validate(token).flatMap {
       case Some(authToken) => userService.retrieve(authToken.userID).flatMap {
         case Some(user) if (user.loginInfo.providerID == "BRUTAL" || user.loginInfo.providerID == CredentialsProvider.ID) =>
-          Logger.info(user.email.getOrElse("") + "\tactivating account")
+          logger.info(user.email.getOrElse("") + "\tactivating account")
           userService.save(user.copy(account = models.Account.Free)).map { _ =>
             Redirect(routes.SignInController.signIn("")).flashing("success" -> Messages("account.activated"))
           }
         case Some(user) if user.loginInfo.providerID != CredentialsProvider.ID =>
-          Logger.info(user.email.getOrElse("") + "\tunable to activate account  providerID: " + user.loginInfo.providerID + " / " + CredentialsProvider.ID)
+          logger.info(user.email.getOrElse("") + "\tunable to activate account  providerID: " + user.loginInfo.providerID + " / " + CredentialsProvider.ID)
           Future.successful(Redirect(routes.SignInController.signIn("")).flashing("error" -> Messages("invalid.activation.link")))
         case _ => Future.successful(Redirect(routes.SignInController.signIn("")).flashing("error" -> Messages("invalid.activation.link")))
       }

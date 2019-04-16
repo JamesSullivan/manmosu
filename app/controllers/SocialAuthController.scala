@@ -14,7 +14,7 @@ import com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry
 
 import javax.inject.Inject
 import models.services.UserService
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.i18n.Messages
 import play.api.mvc.AbstractController
@@ -35,7 +35,7 @@ class SocialAuthController @Inject() (
   userService: UserService,
   authInfoRepository: AuthInfoRepository,
   socialProviderRegistry: SocialProviderRegistry,
-  silhouette: Silhouette[DefaultEnv]) extends AbstractController(cc) with I18nSupport {
+  silhouette: Silhouette[DefaultEnv]) extends AbstractController(cc) with I18nSupport with Logging{
 
   /**
    * Authenticates a user against a social provider.
@@ -47,10 +47,10 @@ class SocialAuthController @Inject() (
     val referer = request.headers.get("referer")
     val uri = referer.getOrElse("")
     val realProvider = if (provider == "BRUTAL") "credential" else provider
-    Logger.info("SocialAuthController " + realProvider)
+    logger.info("SocialAuthController " + realProvider)
     (socialProviderRegistry.get[SocialProvider](realProvider) match {
       case Some(p: OAuth2Provider with CommonSocialProfileBuilder) =>
-      Logger.debug("Social authenticate request.uri: " + request.uri)
+      logger.debug("Social authenticate request.uri: " + request.uri)
         p.authenticate().flatMap {
           case Left(result) => Future.successful(result)
           case Right(authInfo) => for {
@@ -61,10 +61,10 @@ class SocialAuthController @Inject() (
             value <- silhouette.SecuredRequestHandler.environment.authenticatorService.init(authenticator)
             result <- silhouette.SecuredRequestHandler.environment.authenticatorService.embed(value, Redirect(uri))
           } yield {
-            Logger.debug("profile: " + profile.email + "\t" + profile.fullName)
-            Logger.debug("user: " + user)
-            Logger.debug("authenticator: " + authenticator.id + "\t" + authenticator.loginInfo)
-            Logger.info("SocialAuth " + user.loginInfo.providerID + "\t" + user.loginInfo.providerKey)
+            logger.debug("profile: " + profile.email + "\t" + profile.fullName)
+            logger.debug("user: " + user)
+            logger.debug("authenticator: " + authenticator.id + "\t" + authenticator.loginInfo)
+            logger.info("SocialAuth " + user.loginInfo.providerID + "\t" + user.loginInfo.providerKey)
             silhouette.env.eventBus.publish(LoginEvent(user.copy(deleted = false), request))
             result
           }
@@ -72,7 +72,7 @@ class SocialAuthController @Inject() (
       case _ => Future.failed(new ProviderException(s"Cannot authenticate with unexpected social provider $realProvider"))
     }).recover {
       case e: ProviderException =>
-        Logger.error("Unexpected provider error", e)
+        logger.error("Unexpected provider error", e)
         Redirect(routes.SignInController.signIn("")).flashing("error" -> Messages("could.not.authenticate"))
     }
   }

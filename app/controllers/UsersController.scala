@@ -19,7 +19,7 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.I18nSupport
 import play.api.i18n.Messages
 import play.api.libs.ws.WSClient
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.AbstractController
 import play.api.mvc.ControllerComponents
 import utils.Sanitizer.safeHTML
@@ -38,7 +38,7 @@ import utils.auth.DefaultEnv
 
 class UsersController @Inject() (cc: ControllerComponents, implicit val ec: ExecutionContext, ws: WSClient,
   config: Configuration, dbConfigProvider: DatabaseConfigProvider, userService: UserService, socialProviderRegistry: SocialProviderRegistry,
-  silhouette: Silhouette[DefaultEnv]) extends AbstractController(cc) with I18nSupport {
+  silhouette: Silhouette[DefaultEnv]) extends AbstractController(cc) with I18nSupport with Logging {
 
   val dao = new DAORead(dbConfigProvider, config)
 
@@ -46,7 +46,7 @@ class UsersController @Inject() (cc: ControllerComponents, implicit val ec: Exec
   tagDAOImpl.apply(Await.result(dao.tags, 30.seconds))
 
   def users(number: Long, name: String) = silhouette.SecuredAction.async { implicit request =>
-    Logger.info(request.identity.email.getOrElse("Unidentified") + " displayed user number " + number)
+    logger.info(request.identity.email.getOrElse("Unidentified") + " displayed user number " + number)
     val displayUser = Await.result(dao.user(number), 30.seconds)
     displayUser match {
       case Some(displayUser) => 
@@ -79,7 +79,7 @@ class UsersController @Inject() (cc: ControllerComponents, implicit val ec: Exec
   
   def usersDelete(user: Long) = silhouette.SecuredAction.async { implicit request =>
     if(request.identity.userID == user){
-      Logger.info(request.identity.email.getOrElse("Unidentified") + " deleted their own user number " + user)
+      logger.info(request.identity.email.getOrElse("Unidentified") + " deleted their own user number " + user)
       val updatedUser = request.identity.copy(name = Some("*****"), website = Some(""), karma = 0, photoUri = Some("https://secure.gravatar.com/avatar/"),
           sluggedName = Some("*****"), birthDate = None, location = None, markedAbout = None, about = None, isSubscribed = false, receiveAllUpdates = false, deleted = true)
         userService.save(updatedUser).map {
@@ -88,8 +88,8 @@ class UsersController @Inject() (cc: ControllerComponents, implicit val ec: Exec
           case t => Redirect(routes.SignInController.signOut).flashing("error" -> Messages("Unable to update user data: " + t))
         }
     } else {
-      Logger.info("      " + "\t" + "Delete attempt from " + request.remoteAddress + "\t" + request.headers.get("User-Agent").getOrElse("No User-Agent"))
-      Logger.info(request.identity.email.getOrElse("Unidentified") + " tried to delete user number " + user)
+      logger.info("      " + "\t" + "Delete attempt from " + request.remoteAddress + "\t" + request.headers.get("User-Agent").getOrElse("No User-Agent"))
+      logger.info(request.identity.email.getOrElse("Unidentified") + " tried to delete user number " + user)
       Future.successful(Redirect(routes.SignInController.signOut))
     }
   }

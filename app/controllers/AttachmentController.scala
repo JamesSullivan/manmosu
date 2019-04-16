@@ -22,7 +22,7 @@ import models.daos.slick.DAOWrite
 import models.daos.slick.QA
 import models.services.UserService
 import play.api.Configuration
-import play.api.Logger
+import play.api.Logging
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.AbstractController
@@ -38,7 +38,7 @@ import utils.auth.DefaultEnv
  */
 class AttachmentController @Inject() (cc: ControllerComponents, implicit val ec: ExecutionContext,
   config: Configuration, dbConfigProvider: DatabaseConfigProvider, userService: UserService,
-  silhouette: Silhouette[DefaultEnv]) extends AbstractController(cc) with I18nSupport {
+  silhouette: Silhouette[DefaultEnv]) extends AbstractController(cc) with I18nSupport with Logging {
 
   val daoRead = new DAORead(dbConfigProvider, config)
   val daoWrite = new DAOWrite(dbConfigProvider, config)
@@ -106,10 +106,10 @@ class AttachmentController @Inject() (cc: ControllerComponents, implicit val ec:
           val fp = Paths.get(path + request.identity.userID)
           if (!Files.exists(fp)) Files.createDirectory(fp)
           val p = Paths.get(fp + java.io.File.separator + URLDecoder.decode(file.filename, "UTF8"))
-          Logger.info("p.toAbsolutePath(): " + p.toAbsolutePath())
+          logger.info("p.toAbsolutePath(): " + p.toAbsolutePath())
           val f = p.toFile()
           if (f.exists && !f.isDirectory()) f.delete()
-          file.ref.moveTo(f)
+          file.ref.moveFileTo(f)
         }
         Ok("File uploaded")
       }
@@ -118,7 +118,7 @@ class AttachmentController @Inject() (cc: ControllerComponents, implicit val ec:
   }
 }
 
-object AttachmentController {
+object AttachmentController extends Logging {
 
   def saveFile(daoWrite: DAOWrite, path: String, table: QA.Value, id: Long, ip: String, userID: Long) = {
     val d = new java.io.File(path + userID)
@@ -137,12 +137,12 @@ object AttachmentController {
           println("targetPath: " + targetPath)
           java.nio.file.Files.move(f.toPath(), targetPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING)
         }
-        Logger.info("file(s) saved: " + files.length)
+        logger.info("file(s) saved: " + files.length)
       } else {
-        Logger.info("file(s) saved: 0")
+        logger.info("file(s) saved: 0")
       }
     } catch {
-      case e: java.io.IOException => Logger.error(e.getCause + "\r\n" + e.getStackTrace);
+      case e: java.io.IOException => logger.error(e.getCause + "\r\n" + e.getStackTrace);
     } finally {
       if (d != null && d.isDirectory()) {
         for (f <- d.listFiles()) {

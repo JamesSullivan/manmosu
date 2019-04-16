@@ -14,7 +14,7 @@ import javax.inject.Inject
 import models.Account
 import models.User
 import models.daos.UserDAO
-import play.Logger
+import play.api.Logging
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.MySQLProfile.api.booleanColumnType
 import slick.jdbc.MySQLProfile.api.longColumnType
@@ -23,7 +23,7 @@ import slick.jdbc.MySQLProfile.api.stringColumnType
 /**
  * Give access to the user object using Slick
  */
-class UserDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConfigProvider, authInfoRepository: AuthInfoRepository, implicit val ec: ExecutionContext) extends UserDAO with DAOSlick {
+class UserDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConfigProvider, authInfoRepository: AuthInfoRepository, implicit val ec: ExecutionContext) extends UserDAO with DAOSlick with Logging {
 
   import slick.jdbc.MySQLProfile.api._
 
@@ -55,7 +55,7 @@ class UserDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConfigProv
    * @return The found user or None if no user for the given login info could be found.
    */
   def find(loginInfo: LoginInfo) = {
-    Logger.debug("UserDAOSlick.find by loginInfo: " + loginInfo.providerID + "  " + loginInfo.providerKey)
+    logger.debug("UserDAOSlick.find by loginInfo: " + loginInfo.providerID + "  " + loginInfo.providerKey)
     val brutal = (loginInfo.providerID == "credentials")
     db.run(slickLoginInfos.filter(x => (x.providerID === loginInfo.providerID || brutal) && x.providerKey === loginInfo.providerKey).result.headOption).flatMap {
       case Some(info) =>
@@ -108,7 +108,7 @@ class UserDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConfigProv
    * @return The saved user.
    */
   def save(user: User) = {
-    Logger.info("\r\n\r\n!!!!Saving userID: " + user.userID + "\tuser.name: " + user.name)
+    logger.info("\r\n\r\n!!!!Saving userID: " + user.userID + "\tuser.name: " + user.name)
     db.run(slickUsers.filter(_.email === user.email).result.headOption).flatMap {
       case Some(dbuser) =>
         val updatedUser = user.copy(userID = dbuser.userID.get)
@@ -124,7 +124,7 @@ class UserDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConfigProv
           case None => user
         })
       case None =>
-        Logger.debug("inserting new user")
+        logger.debug("inserting new user")
         Await.result(db.run(slickUsers +=
           dbuserFromUser(user)), 30.seconds)
         Await.result(db.run(slickUsers.filter(_.email === user.email).result.headOption.map {
@@ -148,11 +148,11 @@ class UserDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConfigProv
    * @return The deleted user.LoginInfo
    */
   def delete(user: User) = {
-    Logger.info("\r\n\r\n!!!!Deleting userID: " + user.userID + "\tuser.name: " + user.name)
+    logger.info("\r\n\r\n!!!!Deleting userID: " + user.userID + "\tuser.name: " + user.name)
     val dbUser = dbuserFromUser(user)
-    Logger.info("\tNumber of deleted loginfos: " + Await.result(passWordInfoDAOSlick.remove(user.loginInfo), 30.seconds))
-    Logger.info("\tUser removed from userID memory hashmap: " + models.daos.UserDAOImpl.users.remove(user.userID))
-    Logger.info("\tUser removed from email memory hashmap: " + models.daos.UserDAOImpl.usersByEmail.remove(user.email.getOrElse("")))
+    logger.info("\tNumber of deleted loginfos: " + Await.result(passWordInfoDAOSlick.remove(user.loginInfo), 30.seconds))
+    logger.info("\tUser removed from userID memory hashmap: " + models.daos.UserDAOImpl.users.remove(user.userID))
+    logger.info("\tUser removed from email memory hashmap: " + models.daos.UserDAOImpl.usersByEmail.remove(user.email.getOrElse("")))
     db.run(slickUsers.filter(_.email === dbUser.email).delete)
     user
   }

@@ -14,7 +14,7 @@ import javax.inject.Inject
 import models.services.AuthTokenService
 import models.services.UserService
 import play.api.Configuration
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.i18n.Messages
 import play.api.libs.mailer.MailerClient
@@ -45,7 +45,7 @@ class ForgotPasswordController @Inject() (
   mailerClient: MailerClient)(
   implicit
   webJarsUtil: WebJarsUtil,
-  ex: ExecutionContext) extends AbstractController(components) with I18nSupport {
+  ex: ExecutionContext) extends AbstractController(components) with I18nSupport with Logging{
 
   val mailService = new MailService(config)
 
@@ -67,19 +67,19 @@ class ForgotPasswordController @Inject() (
    * @return The result to display.
    */
   def submit = silhouette.UserAwareAction.async { implicit request: Request[AnyContent] =>
-    Logger.info("Starting forgot password")
+    logger.info("Starting forgot password")
     ForgotPasswordForm.form.bindFromRequest.fold(
       form => Future.successful(BadRequest(views.html.forgotPassword(form))),
       email => {
         val loginInfo = LoginInfo(CredentialsProvider.ID, email)
-        Logger.info("loginInfo: " + loginInfo)
+        logger.info("loginInfo: " + loginInfo)
         val result = Redirect(routes.SignInController.signIn("")).flashing("info" -> Messages("forgot_password.sent_mail", email))
         userService.retrieve(loginInfo).flatMap {
           case Some(user) if user.email.isDefined =>
-            Logger.info(user.email.getOrElse("") + "\tabout to E-mail password")
+            logger.info(user.email.getOrElse("") + "\tabout to E-mail password")
             authTokenService.create(user.userID).map { authToken =>
               val url = routes.ResetPasswordController.view(authToken.id).absoluteURL()
-              Logger.info(user.email.getOrElse("") + "\tE-mailing password")
+              logger.info(user.email.getOrElse("") + "\tE-mailing password")
               mailService.sendEmailAsync(email)(
                 Messages("email.reset.password.subject"),
                 views.html.emails.resetPassword(user, url).body,
@@ -87,7 +87,7 @@ class ForgotPasswordController @Inject() (
               result
             }
           case None =>
-            Logger.info("Forgot password - problem E-mailing password to email")
+            logger.info("Forgot password - problem E-mailing password to email")
             Future.successful(Redirect(routes.SignInController.signIn("")).flashing("error" -> (Messages("forgot_password.invalid_email") + "  " + email)))
         }
       })

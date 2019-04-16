@@ -8,10 +8,10 @@ import org.apache.commons.mail.DefaultAuthenticator
 import org.apache.commons.mail.HtmlEmail
 
 import javax.inject.Inject
-import play.Logger
+import play.api.Logging
 import play.api.Configuration
 
-class MailService @Inject() (config: Configuration)(implicit val ec: ExecutionContext) {
+class MailService @Inject() (config: Configuration)(implicit val ec: ExecutionContext) extends Logging {
 
   def conf(s: String): String = config.get[String]("play.mailer." + s)
   val system = akka.actor.ActorSystem()
@@ -38,9 +38,9 @@ class MailService @Inject() (config: Configuration)(implicit val ec: ExecutionCo
     email.setHtmlMsg(bodyHtml);
     // set the alternative message
     email.setTextMsg("Your email client does not support HTML messages");
-    Logger.warn("Sending Email: " + email.send() + "\tto: " + recipients);
-    Logger.info("host: " + conf("host"))
-    Logger.info("user " + conf("user"))
+    logger.warn("Sending Email: " + email.send() + "\tto: " + recipients);
+    logger.info("host: " + conf("host"))
+    logger.info("user " + conf("user"))
   }
 }
 

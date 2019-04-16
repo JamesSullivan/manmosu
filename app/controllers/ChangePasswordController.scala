@@ -18,7 +18,7 @@ import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 
 import forms.ChangePasswordForm
 import javax.inject.Inject
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.i18n.Messages
 import play.api.mvc.AbstractController
@@ -47,7 +47,7 @@ class ChangePasswordController @Inject() (
   passwordHasher: PasswordHasher)(
   implicit
   webJarsUtil: WebJarsUtil,
-  ex: ExecutionContext) extends AbstractController(components) with I18nSupport {
+  ex: ExecutionContext) extends AbstractController(components) with I18nSupport with Logging {
 
   /**
    * Views the `Change Password` page.
@@ -66,7 +66,7 @@ class ChangePasswordController @Inject() (
    */
   def submit = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async {
     implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
-      Logger.info(request.identity.email.getOrElse("") + "\t changing password")
+      logger.info(request.identity.email.getOrElse("") + "\t changing password")
       ChangePasswordForm.form.bindFromRequest.fold(
         form => Future.successful(BadRequest(views.html.changePassword(form, request.identity))),
         password => {
