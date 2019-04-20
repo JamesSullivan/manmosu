@@ -25,7 +25,7 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette-crypto-jca" % "6.0.0-SNAPSHOT",
   "com.mohiva" %% "play-silhouette-testkit" % "6.0.0-SNAPSHOT" % "test",
   "com.iheart" %% "ficus" % "1.4.5",
-  "com.typesafe.play" % "play_2.12" % "2.7.0",
+  "com.typesafe.play" % "play_2.12" % "2.7.1",
   "net.codingwell" %% "scala-guice" % "4.2.3",
   "com.typesafe.play" % "play-slick_2.12" % "4.0.0",
   "org.apache.commons" % "commons-email" % "1.5",
@@ -34,7 +34,7 @@ libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "8.0.15",
   "org.jsoup" % "jsoup" % "1.11.3",
   "org.scalatest" %% "scalatest" % "3.0.7" % "test",
-  "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.1" % "test",
+  "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.2" % "test",
   "org.webjars" %% "webjars-play" % "2.7.0",
   "com.typesafe.play" %% "play-mailer" % "7.0.0",
   "com.typesafe.play" %% "play-mailer-guice" % "7.0.0",
@@ -48,12 +48,12 @@ import com.typesafe.sbt.packager.MappingsHelper._
     mappings in Universal ++= directory(baseDirectory.value / "public")
        
 scalacOptions ++= Seq(
-  "-target:jvm-1.8",
+  // "-target:jvm-1.8",
   "-deprecation",           
   "-encoding", "UTF-8",       // yes, this is 2 args
   "-feature",                
   "-unchecked",
-  //"-Xfatal-warnings",       
+  // "-Xfatal-warnings",       
   // "-Xlint",
   "-Xmax-classfile-name", "100",
   "-Yno-adapted-args",       
