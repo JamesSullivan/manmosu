@@ -108,14 +108,15 @@ class UserDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConfigProv
    * @return The saved user.
    */
   def save(user: User) = {
-    logger.info("\r\n\r\n!!!!Saving userID: " + user.userID + "\tuser.name: " + user.name)
+    logger.info("!!!!Saving userID: " + user.userID + "\tuser.name: " + user.name)
     db.run(slickUsers.filter(_.email === user.email).result.headOption).flatMap {
       case Some(dbuser) =>
+	logger.info("\tupdating existing user")
         val updatedUser = user.copy(userID = dbuser.userID.get)
         val updatedDBUser = dbuserFromUser(updatedUser)
         db.run(slickLoginInfos.filter(_.providerKey === user.email.get).result.headOption.map {
           case Some(loginInfo) =>
-            val updatedDBLoginInfo = DBLoginInfo(loginInfo.id, user.loginInfo.providerID, user.email.getOrElse(""), user.forgotPasswordToken.getOrElse(""),
+            val updatedDBLoginInfo = DBLoginInfo(loginInfo.id, user.loginInfo.providerID, user.email.getOrElse(""), user.forgotPasswordToken.getOrElse(loginInfo.token),
               loginInfo.user_id)
             Await.result(passWordInfoDAOSlick.remove(user.loginInfo), 30.seconds)
             Await.result(db.run(slickUsers.insertOrUpdate(updatedDBUser)), 30.seconds)
@@ -124,7 +125,7 @@ class UserDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConfigProv
           case None => user
         })
       case None =>
-        logger.debug("inserting new user")
+        logger.info("\tinserting new user")
         Await.result(db.run(slickUsers +=
           dbuserFromUser(user)), 30.seconds)
         Await.result(db.run(slickUsers.filter(_.email === user.email).result.headOption.map {

@@ -20,6 +20,7 @@ object UserEditForm {
     mapping(
       "email" -> text,
       "name" -> nonEmptyText,
+      "photoUri" -> text,
       "website" -> text,
       "birthDate" -> optional(localDate("yyyy-MM-dd")),
       "location" -> text,
@@ -34,6 +35,7 @@ object UserEditForm {
   case class Data(
     email: String,
     name: String,
+    photoUri: String,
     website: String,
     birthDate: Option[LocalDate],
     location: String,
@@ -43,7 +45,7 @@ object UserEditForm {
 
   def userToFilledForm(user: User): Form[UserEditForm.Data] = {
     val userForm = UserEditForm
-    userForm.form.fill(Data(user.email.getOrElse(""), user.name.getOrElse(""), user.website.getOrElse(""), user.birthDate.map(_.toLocalDate),
+    userForm.form.fill(Data(user.email.getOrElse(""), user.name.getOrElse(""), user.photoUri.getOrElse(""), user.website.getOrElse(""), user.birthDate.map(_.toLocalDate),
       user.location.getOrElse(""), user.about.getOrElse(""), user.isSubscribed, user.receiveAllUpdates))
   }
 

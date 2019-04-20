@@ -29,6 +29,7 @@
     @helper.CSRF.formField
     @helper.inputText(userEditForm("email"), '_label -> messages("user_profile.edit.form.email.label"), 'readonly->"readonly", 'value->userEditForm.data("email"), 'style->"color:gray", 'class -> "text-input", '_showConstraints -> false)<br/>
 	@helper.inputText(userEditForm("name"), '_label -> messages("signup.form.username.label"), 'class -> "required text-input", '_showConstraints -> false)<br/>
+	@helper.inputText(userEditForm("photoUri"),'_label -> messages("user_profile.edit.photo"), 'class -> "text-input form-control", '_showConstraints -> false)<br/>
 	@helper.inputText(userEditForm("website"),'_label -> messages("user_profile.edit.form.website.label"), 'class -> "text-input form-control", '_showConstraints -> false)<br/>
 	@helper.inputText(userEditForm("birthDate"),'_label -> messages("user_profile.edit.form.birth_date.label"), 'placeholder -> "yyyy-mm-dd", 'maxlength -> "10", 'id -> "datepicker", 'class -> "text-input date", '_showConstraints -> false)<br/>
     @helper.inputText(userEditForm("location"),'_label -> messages("user_profile.edit.form.location.label"), 'class -> "text-input form-control", '_showConstraints -> false)<br/>

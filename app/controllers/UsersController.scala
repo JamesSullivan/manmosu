@@ -98,9 +98,9 @@ class UsersController @Inject() (cc: ControllerComponents, implicit val ec: Exec
     UserEditForm.form.bindFromRequest.fold(
       formWithErrors => { Future.successful(BadRequest(views.html.usersEdit(formWithErrors, request.identity, config))) },
       uForm => {
-        val updatedUser = request.identity.copy(name = Some(safeText(uForm.name)), website = Some(safeText(uForm.website)), birthDate = uForm.birthDate.map(_.atStartOfDay),
+        val updatedUser = request.identity.copy(name = Some(safeText(uForm.name)), photoUri = Some(safeText(uForm.photoUri)), website = Some(safeText(uForm.website)), birthDate = uForm.birthDate.map(_.atStartOfDay),
           location = Some(safeText(uForm.location)), markedAbout = Some(safeHTML(uForm.description)), about = Some(safeText(uForm.description)), isSubscribed = uForm.isSubscribed,
-          receiveAllUpdates = uForm.receiveAllUpdates)
+          receiveAllUpdates = uForm.receiveAllUpdates, forgotPasswordToken = None)
         userService.save(updatedUser).map {
           savedUser => silhouette.env.eventBus.publish(LoginEvent(updatedUser, request)); Redirect(routes.UsersController.users(updatedUser.userID, updatedUser.sluggedName.getOrElse("")))
         } recover {

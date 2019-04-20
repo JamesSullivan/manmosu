@@ -506,7 +506,7 @@ popup.close = close
 
 # USER PROFILE
 user_profile.edit = edit profile and preferences
-user_profile.edit.photo = Change photo with gravatar
+user_profile.edit.photo = Change photo url
 user_profile.edit.cancel = cancel
 user_profile.ban = Block user
 user_profile.undo_ban = Unblock user
