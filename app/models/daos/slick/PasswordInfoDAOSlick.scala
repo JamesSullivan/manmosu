@@ -38,11 +38,11 @@ class PasswordInfoDAOSlick @Inject() (protected val dbConfigProvider: DatabaseCo
     old.andThen { 
       case Success(oldDbLoginInfo: Option[DBLoginInfo]) if(oldDbLoginInfo.isDefined) => 
         logger.info("oldDbLoginfo: " + oldDbLoginInfo)
-        db.run(query.update(DBLoginInfo(oldDbLoginInfo.get.id, loginInfo.providerID, loginInfo.providerKey, authInfo.password, oldDbLoginInfo.get.user_id)))
+        db.run(slickLoginInfos.update(DBLoginInfo(oldDbLoginInfo.get.id, loginInfo.providerID, loginInfo.providerKey, authInfo.password, oldDbLoginInfo.get.user_id)))
       case _  =>
         logger.info("newDbLoginfo: ")
         db.run(slickUsers.filter(_.email === loginInfo.providerKey).result.headOption) onComplete {
-          case Success(Some(dbuser)) if(dbuser.userID.isDefined) => db.run(query.insertOrUpdate(DBLoginInfo(None, loginInfo.providerID, loginInfo.providerKey, authInfo.password, dbuser.userID.get)))
+          case Success(Some(dbuser)) if(dbuser.userID.isDefined) => db.run(slickLoginInfos.insertOrUpdate(DBLoginInfo(None, loginInfo.providerID, loginInfo.providerKey, authInfo.password, dbuser.userID.get)))
         }
     } map { x => authInfo}
       
