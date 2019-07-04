@@ -163,7 +163,7 @@ class ApplicationController @Inject() (cc: ControllerComponents, implicit val ec
 
   // id is overloaded can be questionId, answerId or commentId
   def comment(id: Long, about: String) = silhouette.SecuredAction.async { implicit request =>
-    println("request.body: " + request.body)
+    // println("request.body: " + request.body)
     val edit: Boolean = request.uri.contains("/edit/")
     val userID = request.identity.userID
     val formBody: Option[Map[String, Seq[String]]] = request.body.asFormUrlEncoded

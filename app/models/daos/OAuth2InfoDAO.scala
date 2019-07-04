@@ -3,6 +3,7 @@ package models.daos
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
+import scala.reflect.ClassTag
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.providers.OAuth2Info
@@ -16,7 +17,7 @@ import models.daos.OAuth2InfoDAO.data
  *
  * Note: Not thread safe, demo only.
  */
-class OAuth2InfoDAO @Inject() (implicit val ec: ExecutionContext) extends DelegableAuthInfoDAO[OAuth2Info] {
+class OAuth2InfoDAO @Inject() (implicit val ec: ExecutionContext, implicit val classTag: ClassTag[OAuth2Info]) extends DelegableAuthInfoDAO[OAuth2Info] {
 
   /**
    * Finds the auth info which is linked with the specified login info.

@@ -16,6 +16,6 @@ case class QuestionUser(row: QuestionRow, informationRow: QuestioninformationRow
   var watching: Boolean = false //current user (not necessarily question author)
   var informationUserTagRows: Seq[(QuestioninformationRow, UsersRow, Seq[TagxRow])] = Seq[(QuestioninformationRow, UsersRow, Seq[TagxRow])]()
 
-  def url = row.id + "-" + informationRow.sluggedtitle
+  def url = s"${row.id}-${informationRow.sluggedtitle}"
 
 }

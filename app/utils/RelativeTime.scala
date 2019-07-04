@@ -23,22 +23,22 @@ object RelativeTime {
   def relativeTime(past: LocalDateTime): String = {
     val now = LocalDateTime.now()
     val years = past.until(now, YEARS)
-    if (years > 1) return years + " years ago"
+    if (years > 1) return s"$years years ago"
     if (years > 0) return "a year ago"
     val months = past.until(now, MONTHS)
-    if (months > 1) return months + "  months ago"
+    if (months > 1) return s"$months months ago"
     if (months > 0) return "a month ago"
     val weeks = past.until(now, WEEKS)
-    if (weeks > 1) return weeks + " weeks ago"
+    if (weeks > 1) return s"$weeks weeks ago"
     if (weeks > 0) return "a week ago"
     val days = past.until(now, DAYS)
-    if (days > 1) return days + " days ago"
+    if (days > 1) return s"$days days ago"
     if (days > 0) return "a day ago"
     val hours = past.until(now, HOURS)
-    if (hours > 1) return hours + " hours ago"
+    if (hours > 1) return s"$hours hours ago"
     if (hours > 0) return "an hour ago"
     val minutes = past.until(now, MINUTES)
-    if (minutes > 1) return minutes + " minutes ago"
+    if (minutes > 1) return s"$minutes minutes ago"
     if (minutes > 0) return "a minute ago"
     return "just now"
   }

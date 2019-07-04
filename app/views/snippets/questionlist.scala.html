@@ -11,7 +11,7 @@
 			<div class="summary question-summary">
 				<div class="item-title-wrapper">
 					<h3 class="title @if(full){item-title main-thread-title }question-title">
-						<a href="/@{q.informationRow.questionId.get+"-"+q.informationRow.sluggedtitle}">@{q.informationRow.title}</a>
+						<a href="/@{s"${q.informationRow.questionId.get}-${q.informationRow.sluggedtitle}"}">@{q.informationRow.title}</a>
 					</h3>
 					@if(full==true){
 					<ul class="tags" itemprop="keywords">

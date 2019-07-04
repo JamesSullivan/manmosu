@@ -2,6 +2,7 @@ package utils
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.DurationInt
+import scala.jdk.CollectionConverters._
 import scala.language.postfixOps
 
 import org.apache.commons.mail.DefaultAuthenticator
@@ -31,7 +32,7 @@ class MailService @Inject() (config: Configuration)(implicit val ec: ExecutionCo
     email.setSSLOnConnect(config.get[Boolean]("play.mailer.ssl"));
     email.setStartTLSEnabled(config.get[Boolean]("play.mailer.tls"))
     val j = recipients.map(a => new javax.mail.internet.InternetAddress(a))
-    email.setTo(scala.collection.JavaConverters.asJavaCollection(j))
+    email.setTo(j.asJavaCollection)
     email.setFrom(conf("from"), conf("from"))
     email.setSubject(subject);
     // set the html message

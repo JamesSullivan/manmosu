@@ -36,7 +36,7 @@ class CustomSecuredErrorHandler @Inject() (
    */
   override def onNotAuthenticated(implicit request: RequestHeader) = {
     logger.warn("CustomSecuredErrorHandler onNotAuthenticated uri: " + request.uri)
-    Future.successful(Redirect(routes.SignInController.signIn("") + request.uri))
+    Future.successful(Redirect(routes.SignInController.signIn("").toString + request.uri))
   }
 
   /**

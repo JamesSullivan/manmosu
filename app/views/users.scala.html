@@ -69,7 +69,7 @@ $('ul.pager a').click(function(){
 					<span class="reputation-won">
 						<span class="counter karma-value @{if(re.voteCount>0)"positive"else"negative"}-karma">@{if(re.voteCount>0)"+"}@re.voteCount</span>
 					</span>
-					<a href="/@{re.id + "-" + re.sluggedTitle}">
+					<a href="/@{s"${re.id}-${re.sluggedTitle}"}">
 						@re.title 
 					</a>
 				</li>

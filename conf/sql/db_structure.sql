@@ -130,6 +130,7 @@ DROP TABLE IF EXISTS `Answer_Comments`;
 CREATE TABLE `Answer_Comments` (
   `Answer_id` bigint(20) NOT NULL,
   `comments_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`comments_id`),
   UNIQUE KEY `UK_731ugn0r28nit0o73yytcw5oh` (`comments_id`),
   KEY `FK_731ugn0r28nit0o73yytcw5oh` (`comments_id`),
   KEY `FK_5c40gkw8p92hpuy5nnothdhw5` (`Answer_id`),
@@ -184,6 +185,7 @@ DROP TABLE IF EXISTS `Answer_Votes`;
 CREATE TABLE `Answer_Votes` (
   `Answer_id` bigint(20) NOT NULL,
   `votes_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`votes_id`),
   UNIQUE KEY `UK_5ya5d072g3h38tvb9brj7bs8o` (`votes_id`),
   KEY `FK_5ya5d072g3h38tvb9brj7bs8o` (`votes_id`),
   KEY `FK_qpawvfihxtc49opw1q5le336l` (`Answer_id`),
@@ -299,6 +301,7 @@ DROP TABLE IF EXISTS `Comment_Flags`;
 CREATE TABLE `Comment_Flags` (
   `Comment_id` bigint(20) NOT NULL,
   `flags_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`flags_id`),
   UNIQUE KEY `UK_gkehc29f3h04bua96bjurv4vd` (`flags_id`),
   KEY `FK_gkehc29f3h04bua96bjurv4vd` (`flags_id`),
   KEY `FK_g45y0rm9o8k7uyoih84rrccra` (`Comment_id`),
@@ -326,6 +329,7 @@ DROP TABLE IF EXISTS `Comment_Votes`;
 CREATE TABLE `Comment_Votes` (
   `Comment_id` bigint(20) NOT NULL,
   `votes_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`votes_id`),
   UNIQUE KEY `UK_dtgxtqffciorpdsjdshnkbpw6` (`votes_id`),
   KEY `FK_dtgxtqffciorpdsjdshnkbpw6` (`votes_id`),
   KEY `FK_obxdv4j0ph2swt8r81dx8h0yw` (`Comment_id`),
@@ -755,6 +759,7 @@ DROP TABLE IF EXISTS `Question_Comments`;
 CREATE TABLE `Question_Comments` (
   `Question_id` bigint(20) NOT NULL,
   `comments_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`comments_id`),
   UNIQUE KEY `UK_6jsfvsef241a3ldcck6pid4vi` (`comments_id`),
   KEY `FK_6jsfvsef241a3ldcck6pid4vi` (`comments_id`),
   KEY `FK_fm57yvrnidsyeuvls0he5c9pk` (`Question_id`),
@@ -782,6 +787,7 @@ DROP TABLE IF EXISTS `Question_Flags`;
 CREATE TABLE `Question_Flags` (
   `Question_id` bigint(20) NOT NULL,
   `flags_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`flags_id`),
   UNIQUE KEY `UK_a8brcb8bpevccipiyplquqqjv` (`flags_id`),
   KEY `FK_a8brcb8bpevccipiyplquqqjv` (`flags_id`),
   KEY `FK_ftntexa7hxbaqo2i2yg4i0yr3` (`Question_id`),
@@ -836,6 +842,7 @@ DROP TABLE IF EXISTS `Question_Votes`;
 CREATE TABLE `Question_Votes` (
   `Question_id` bigint(20) NOT NULL,
   `votes_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`votes_id`),
   UNIQUE KEY `UK_p5sgssf0gw0br66mvu9cctlmq` (`votes_id`),
   KEY `FK_p5sgssf0gw0br66mvu9cctlmq` (`votes_id`),
   KEY `FK_24u6uwfjr8s8pfk7oyfw8u4o4` (`Question_id`),
@@ -863,6 +870,7 @@ DROP TABLE IF EXISTS `Question_Watchers`;
 CREATE TABLE `Question_Watchers` (
   `Question_id` bigint(20) NOT NULL,
   `watchers_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`Question_id`,`watchers_id`),
   UNIQUE KEY `UK_5twinfe7e6g09gaowkeah0498` (`watchers_id`),
   KEY `FK_5twinfe7e6g09gaowkeah0498` (`watchers_id`),
   KEY `FK_pu72rhjonka0flev96adthdp0` (`Question_id`),

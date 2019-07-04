@@ -10,10 +10,10 @@
 				<div class="wmd-panel">
 					<div id="wmd-button-bar"></div>
 					<img id="image-editor-preview" alt="Preview" style="display: none">
-					@helper.textarea(answerForm("description"),'id-> "wmd-input", '_label -> messages("newanswer.answer"), 
-			     	'class -> "required description-input hintable wmd-input", 'datahintid->"newanswer-answer-hint",
-			     	'minlength->"15", 'maxlength->"20000", 'onfocus->"setHints(this);",
-			     	'placeholder->Html(messages("answer.form.placeholder")), '_showConstraints -> false)
+					@helper.textarea(answerForm("description"),Symbol("id")-> "wmd-input", Symbol("_label") -> messages("newanswer.answer"), 
+			     	Symbol("class") -> "required description-input hintable wmd-input", Symbol("datahintid")->"newanswer-answer-hint",
+			     	Symbol("minlength")->"15", Symbol("maxlength")->"20000", Symbol("onfocus")->"setHints(this);",
+			     	Symbol("placeholder")->Html(messages("answer.form.placeholder")), Symbol("_showConstraints") -> false)
 				</div>
 				<div id="wmd-preview" class="md-panel md-preview hidden"></div>
 			</div>
@@ -27,13 +27,13 @@
 		<br/>
 	  @{val showInput = if(request.uri.contains("/edit/")) "text" else "hidden"
 	  val showLabel = if(request.uri.contains("/edit/")) messages("edit_form.comment.label") else ""
-		helper.inputText(answerForm("comment"), '_label -> showLabel, 'class -> "hintable text-input required", 
-		'datahintid->"answer-comment-hint", 'minlength->"5", 'maxlength->"250", 
-		'placeholder->messages("edit_form.comment.placeholder"), 'onfocus->"setHints(this);",
-		'_showConstraints -> false, 'type->showInput)
+		helper.inputText(answerForm("comment"), Symbol("_label") -> showLabel, Symbol("class") -> "hintable text-input required", 
+		Symbol("datahintid")->"answer-comment-hint", Symbol("minlength")->"5", Symbol("maxlength")->"250", 
+		Symbol("placeholder")->messages("edit_form.comment.placeholder"), Symbol("onfocus")->"setHints(this);",
+		Symbol("_showConstraints") -> false, Symbol("type")->showInput)
       }
-	  @helper.inputText(answerForm("answerId"), '_label -> "", 'type->"hidden", '_showConstraints -> false)
-	  @helper.inputText(answerForm("questionId"), '_label -> "", 'type->"hidden", '_showConstraints -> false)
+	  @helper.inputText(answerForm("answerId"), Symbol("_label") -> "", Symbol("type")->"hidden", Symbol("_showConstraints") -> false)
+	  @helper.inputText(answerForm("questionId"), Symbol("_label") -> "", Symbol("type")->"hidden", Symbol("_showConstraints") -> false)
 		<input class="post-submit big-submit submit" onclick="callUpload();" value="Confirm." type="submit" />
 		<p>&nbsp;</p>
 		<label style="display: inline-block;"><input id="watching" name="watching" value="true" checked="@answerForm("watching").value" class="ignore" type="checkbox">@messages("post.watch")</label>

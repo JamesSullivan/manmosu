@@ -5,6 +5,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 import scala.util.Success
+import scala.reflect.ClassTag
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.util.PasswordInfo
@@ -20,6 +21,8 @@ import play.api.db.slick.DatabaseConfigProvider
 class PasswordInfoDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit val ec: ExecutionContext)
     extends DelegableAuthInfoDAO[PasswordInfo] with DAOSlick with Logging {
   import slick.jdbc.MySQLProfile.api._
+
+  val classTag: scala.reflect.ClassTag[com.mohiva.play.silhouette.api.util.PasswordInfo] = scala.reflect.classTag[PasswordInfo]
   
   /**
    * Saves the LoginInfo.

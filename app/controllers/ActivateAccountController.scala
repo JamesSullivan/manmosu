@@ -56,7 +56,7 @@ class ActivateAccountController @Inject() (
     val decodedEmail = URLDecoder.decode(email, "UTF-8")
     val loginInfo = LoginInfo(CredentialsProvider.ID, decodedEmail)
     val result = Redirect(routes.SignInController.signIn("")).flashing("info" -> Messages("activation.email.sent", decodedEmail))
-    logger.info("send loginInfo: " + loginInfo)
+    logger.info("send loginInfo: " + loginInfo.toString)
     userService.retrieve(loginInfo).flatMap {
       case Some(user) if user.account.id < 1 =>
         logger.info(user.email.getOrElse("") + "\t sending activation E-mail")
@@ -66,7 +66,7 @@ class ActivateAccountController @Inject() (
           result
         }
       case None =>
-        logger.info(loginInfo + "\t unable to send activation E-mail")
+        logger.info(loginInfo.toString + "\t unable to send activation E-mail")
         Future.successful(result)
     }
   }

@@ -6,12 +6,13 @@ import slick.jdbc.MySQLProfile
 // AUTO-GENERATED Slick data model
 // Tag changed to Tagx because of naming collision
 /** Stand-alone Slick data model for immediate use */
-object Tables extends {
+abstract class tableEarlyInitialization { this: Tables => 
   val profile = slick.jdbc.MySQLProfile
   var dbName = "";
-} with Tables {
 }
 
+object Tables extends tableEarlyInitialization with Tables {
+}
 
 /** Slick data model trait for extension, choice of backend or usage in the cake pattern. (Make sure to initialize this late.) */
 trait Tables {
@@ -139,7 +140,7 @@ trait Tables {
     /** Database column Answer_id SqlType(BIGINT) */
     val answerId: Rep[Long] = column[Long]("Answer_id")
     /** Database column comments_id SqlType(BIGINT) */
-    val commentsId: Rep[Long] = column[Long]("comments_id")
+    val commentsId: Rep[Long] = column[Long]("comments_id", O.PrimaryKey)
 
     /** Foreign key referencing Answer (database name FK_5c40gkw8p92hpuy5nnothdhw5) */
     lazy val answerFk = foreignKey("FK_5c40gkw8p92hpuy5nnothdhw5", answerId, Answer)(r => r.id, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
@@ -258,7 +259,7 @@ trait Tables {
     /** Database column Answer_id SqlType(BIGINT) */
     val answerId: Rep[Long] = column[Long]("Answer_id")
     /** Database column votes_id SqlType(BIGINT) */
-    val votesId: Rep[Long] = column[Long]("votes_id")
+    val votesId: Rep[Long] = column[Long]("votes_id", O.PrimaryKey)
 
     /** Foreign key referencing Answer (database name FK_qpawvfihxtc49opw1q5le336l) */
     lazy val answerFk = foreignKey("FK_qpawvfihxtc49opw1q5le336l", answerId, Answer)(r => r.id, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
@@ -424,7 +425,7 @@ trait Tables {
     /** Database column Comment_id SqlType(BIGINT) */
     val commentId: Rep[Long] = column[Long]("Comment_id")
     /** Database column flags_id SqlType(BIGINT) */
-    val flagsId: Rep[Long] = column[Long]("flags_id")
+    val flagsId: Rep[Long] = column[Long]("flags_id", O.PrimaryKey)
 
     /** Foreign key referencing Comment (database name FK_g45y0rm9o8k7uyoih84rrccra) */
     lazy val commentFk = foreignKey("FK_g45y0rm9o8k7uyoih84rrccra", commentId, Comment)(r => r.id, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
@@ -455,7 +456,7 @@ trait Tables {
     /** Database column Comment_id SqlType(BIGINT) */
     val commentId: Rep[Long] = column[Long]("Comment_id")
     /** Database column votes_id SqlType(BIGINT) */
-    val votesId: Rep[Long] = column[Long]("votes_id")
+    val votesId: Rep[Long] = column[Long]("votes_id", O.PrimaryKey)
 
     /** Foreign key referencing Comment (database name FK_obxdv4j0ph2swt8r81dx8h0yw) */
     lazy val commentFk = foreignKey("FK_obxdv4j0ph2swt8r81dx8h0yw", commentId, Comment)(r => r.id, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
@@ -917,7 +918,7 @@ trait Tables {
     /** Database column Question_id SqlType(BIGINT) */
     val questionId: Rep[Long] = column[Long]("Question_id")
     /** Database column comments_id SqlType(BIGINT) */
-    val commentsId: Rep[Long] = column[Long]("comments_id")
+    val commentsId: Rep[Long] = column[Long]("comments_id", O.PrimaryKey)
 
     /** Foreign key referencing Comment (database name FK_6jsfvsef241a3ldcck6pid4vi) */
     lazy val commentFk = foreignKey("FK_6jsfvsef241a3ldcck6pid4vi", commentsId, Comment)(r => r.id, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
@@ -948,7 +949,7 @@ trait Tables {
     /** Database column Question_id SqlType(BIGINT) */
     val questionId: Rep[Long] = column[Long]("Question_id")
     /** Database column flags_id SqlType(BIGINT) */
-    val flagsId: Rep[Long] = column[Long]("flags_id")
+    val flagsId: Rep[Long] = column[Long]("flags_id", O.PrimaryKey)
 
     /** Foreign key referencing Flag (database name FK_a8brcb8bpevccipiyplquqqjv) */
     lazy val flagFk = foreignKey("FK_a8brcb8bpevccipiyplquqqjv", flagsId, Flag)(r => r.id, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
@@ -1107,7 +1108,7 @@ trait Tables {
     /** Database column Question_id SqlType(BIGINT) */
     val questionId: Rep[Long] = column[Long]("Question_id")
     /** Database column votes_id SqlType(BIGINT) */
-    val votesId: Rep[Long] = column[Long]("votes_id")
+    val votesId: Rep[Long] = column[Long]("votes_id", O.PrimaryKey)
 
     /** Foreign key referencing Question (database name FK_24u6uwfjr8s8pfk7oyfw8u4o4) */
     lazy val questionFk = foreignKey("FK_24u6uwfjr8s8pfk7oyfw8u4o4", questionId, Question)(r => r.id, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
@@ -1139,6 +1140,8 @@ trait Tables {
     val questionId: Rep[Long] = column[Long]("Question_id")
     /** Database column watchers_id SqlType(BIGINT) */
     val watchersId: Rep[Long] = column[Long]("watchers_id")
+    
+    val pk = primaryKey("Question_Watchers_PK", (questionId, watchersId))
 
     /** Foreign key referencing Question (database name FK_pu72rhjonka0flev96adthdp0) */
     lazy val questionFk = foreignKey("FK_pu72rhjonka0flev96adthdp0", questionId, Question)(r => r.id, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)

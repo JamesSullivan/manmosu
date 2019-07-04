@@ -8,9 +8,9 @@
 <form class="validated-form question-form form-with-upload hinted-form" action='/ask' method="post" autocomplete="off">
 	@helper.CSRF.formField
 	
-	@helper.inputText(askForm("title"), '_label -> messages("question.title.label"), 'class -> "required hintable text-input question-title-input ignore", 
-		'datahintid->"question-title-hint", 'minlength->"15", 'maxlength->"150", 'placeholder->messages("question.title.placeholder"),
-		'onfocus->"setHints(this);", '_showConstraints -> false, 'type->"text")
+	@helper.inputText(askForm("title"), Symbol("_label") -> messages("question.title.label"), Symbol("class") -> "required hintable text-input question-title-input ignore", 
+	Symbol("datahintid")->"question-title-hint", Symbol("minlength")->"15", Symbol("maxlength")->"150", Symbol("placeholder")->messages("question.title.placeholder"),
+	Symbol("onfocus")->"setHints(this);", Symbol("_showConstraints") -> false, Symbol("type")->"text")
 		<div id="question-suggestions" class="hidden">
 			<h2 class="title section-title">@messages("question.similars")</h2>
 			<ul class="suggested-questions-list"></ul>
@@ -20,10 +20,10 @@
 			<div class="wmd-panel">
 				<div id="wmd-button-bar"></div>
 				<img id="image-editor-preview" alt="Preview" style="display: none">
-			     @helper.textarea(askForm("description"),'id-> "wmd-input", '_label -> "", 
-			     	'class -> "required description-input hintable wmd-input",
-			     	'datahintid->"question-description-hint", 'minlength->"15", 'maxlength->"50000", 'onfocus->"setHints(this);",
-			     	'placeholder->messages("question.description.placeholder"), '_showConstraints -> false)
+			     @helper.textarea(askForm("description"), Symbol("id") -> "wmd-input", Symbol("_label") -> "", 
+				 Symbol("class") -> "required description-input hintable wmd-input",
+				 Symbol("datahintid")->"question-description-hint", Symbol("minlength")->"15", Symbol("maxlength")->"50000", Symbol("onfocus")->"setHints(this);",
+				 Symbol("placeholder")->messages("question.description.placeholder"), Symbol("_showConstraints")  -> false)
 			     	<br/>
 			</div>
 			<div id="wmd-preview" class="md-panel md-preview"></div>
@@ -54,12 +54,12 @@
 	@{val edit = (askForm("questionId").value.getOrElse("0")!="0")
 	  val showInput = if(edit) "text" else "hidden"
 	  val showLabel = if(edit) messages("edit_form.comment.label") else ""
-		helper.inputText(askForm("comment"), '_label -> showLabel, 'class -> "hintable text-input required", 
-		'datahintid->"question-comment-hint", 'minlength->"5", 'maxlength->"250", 
-		'placeholder->messages("edit_form.comment.placeholder"), 'onfocus->"setHints(this);",
-		'_showConstraints -> false, 'type->showInput, '_showErrors -> edit)
+		helper.inputText(askForm("comment"), Symbol("_label") -> showLabel, Symbol("class") -> "hintable text-input required", 
+		Symbol("datahintid")->"question-comment-hint", Symbol("minlength")->"5", Symbol("maxlength")->"250", 
+		Symbol("placeholder")->messages("edit_form.comment.placeholder"), Symbol("onfocus")->"setHints(this);",
+		Symbol("_showConstraints") -> false, Symbol("type")->showInput, Symbol("_showErrors") -> edit)
     }
-    @{helper.inputText(askForm("markedDescription"), '_label -> "", 'class -> "text-input", 'type->"hidden", '_showErrors -> false)}
+    @{helper.inputText(askForm("markedDescription"), Symbol("_label") -> "", Symbol("class") -> "text-input", Symbol("type") ->"hidden", Symbol("_showErrors")  -> false)}
     @{val showButton = if(askForm("questionId").value.getOrElse("0")!="0") messages("question.edit_form.submit") else messages("question.new_form.submit")
       Html("""<input class="post-submit big-submit" onclick="callUpload(); $('input#markedDescription').val(document.getElementById('wmd-preview').innerHTML);" type="submit" value="""+"\""+showButton+"\""+"""/><br/>""")
       }
@@ -69,7 +69,7 @@
 	<p>&nbsp;</p>
 	<label style="display: inline-block;"><input id="watching" name="watching" value="true" checked="@{askForm("watching").value}" class="ignore" type="checkbox">@messages("post.watch")</label>
 
-	@helper.inputText(askForm("questionId"), '_label -> "", 'type->"hidden", '_showConstraints -> false, '_showErrors -> false)
+	@helper.inputText(askForm("questionId"), Symbol("_label") -> "", Symbol("type") ->"hidden", Symbol("_showConstraints")  -> false, Symbol("_showErrors")  -> false)
 </form>
 <form method="post" id="uploadForm" enctype="multipart/form-data">@helper.CSRF.formField</form>
 <script src="/assets/js/attachments.js"></script>

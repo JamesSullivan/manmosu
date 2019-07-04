@@ -105,7 +105,7 @@ class AttachmentController @Inject() (cc: ControllerComponents, implicit val ec:
         multipartForm.files.map { file =>
           val fp = Paths.get(path + request.identity.userID)
           if (!Files.exists(fp)) Files.createDirectory(fp)
-          val p = Paths.get(fp + java.io.File.separator + URLDecoder.decode(file.filename, "UTF8"))
+          val p = Paths.get(fp.toString + java.io.File.separator + URLDecoder.decode(file.filename, "UTF8"))
           logger.info("p.toAbsolutePath(): " + p.toAbsolutePath())
           val f = p.toFile()
           if (f.exists && !f.isDirectory()) f.delete()
@@ -142,7 +142,7 @@ object AttachmentController extends Logging {
         logger.info("file(s) saved: 0")
       }
     } catch {
-      case e: java.io.IOException => logger.error(e.getCause + "\r\n" + e.getStackTrace);
+      case e: java.io.IOException => logger.error(e.getCause.toString + "\r\n" + e.getStackTrace);
     } finally {
       if (d != null && d.isDirectory()) {
         for (f <- d.listFiles()) {

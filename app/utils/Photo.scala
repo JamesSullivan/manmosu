@@ -14,7 +14,7 @@ object Photo {
 
   def getPhotoString(avatarimageId: Option[Long], email: Option[String], photouri: Option[String], width: Int, height: Int, gravatarUrl: String = "https://www.gravatar.com/avatar/"): String = {
     if (avatarimageId.isDefined) return linkedAvatarPhoto(avatarimageId, width, height);
-    val size: String = width + "x" + height;
+    val size: String = s"${width}x${height}";
     if (photouri.isEmpty) {
       val digest: String = utils.Digester.md5(email.getOrElse(""));
       val identiURL: String = gravatarUrl + digest +"?s=" + width + "&d=identicon&r=PG"

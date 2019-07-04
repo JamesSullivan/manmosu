@@ -8,12 +8,12 @@
 @main(messages("site.name")+" - "+messages("metas.signup.title")) {
     <h2 class="title page-title subheader">@messages("signup.link")</h2>
         @{if(google_datasitekey.length > 0)Html("""<script src="https://www.google.com/recaptcha/api.js" async defer></script>""")}
-        @helper.form(action = routes.SignUpController.submit(), args = 'id -> "SignUpForm", 'name -> "SignUpForm") {
+        @helper.form(action = routes.SignUpController.submit(), args = Symbol("id") -> "SignUpForm", Symbol("name") -> "SignUpForm") {
             @helper.CSRF.formField
-			@helper.inputText(signUpForm("name"), '_label -> messages("signup.form.username.label"), 'class -> "text-input", '_showConstraints -> false)<br/>
-			@helper.inputText(signUpForm("email"),'_label -> messages("signup.form.email.label"), 'class -> "required text-input form-control", '_showConstraints -> false)
+			@helper.inputText(signUpForm("name"), Symbol("_label") -> messages("signup.form.username.label"), Symbol("class") -> "text-input", Symbol("_showConstraints") -> false)<br/>
+			@helper.inputText(signUpForm("email"),Symbol("_label") -> messages("signup.form.email.label"), Symbol("class") -> "required text-input form-control", Symbol("_showConstraints") -> false)
 			<br/>
-			@helper.inputPassword(signUpForm("password"), '_label -> messages("signup.form.password.label"), 'class -> "required text-input form-control", '_showConstraints -> false)
+			@helper.inputPassword(signUpForm("password"), Symbol("_label") -> messages("signup.form.password.label"), Symbol("class") -> "required text-input form-control", Symbol("_showConstraints") -> false)
 			<br/>
 			 @{if(google_datasitekey.length > 0){Html(s"<div class='form-group g-recaptcha' data-sitekey='$google_datasitekey'></div>")}else{Html("<input type='hidden' id='g-recaptcha-response' name='g-recaptcha-response' value=''/>")}}
 			<br/>

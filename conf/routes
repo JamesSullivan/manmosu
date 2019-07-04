@@ -23,7 +23,7 @@ POST    /upload  										controllers.AttachmentController.upload
 POST    /ask                    		 				controllers.QuestionController.asked
 GET     /ask                    		 				controllers.QuestionController.ask(questionId: Long ?= 0)
 
-POST	/comment/edit/$commentId<[0-9]+>				controllers.ApplicationController.comment(commentId: Long, about: String="comment")
+POST	/comment/edit/$commentId<[0-9]+>				controllers.ApplicationController.comment(commentId: Long, about: String = "comment")
 POST	/comment/$number<[0-9]+>/voto/:dir  			controllers.ApplicationController.commentVote(number: Long, dir: String)
 POST	/comment/$commentId<[0-9]+>/mark				controllers.ApplicationController.mark(commentId: Long)
 

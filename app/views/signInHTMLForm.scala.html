@@ -6,7 +6,7 @@
 @if(request.headers != null){@request.headers} *@
  <fieldset class="col-md-10 center-block">
     <h2 class="title page-title subheader">@messages("metas.login.title")</h2>
-     @helper.form(action = routes.CredentialsAuthController.authenticate(), args = 'id -> "form-login", 'name -> "form-login") {
+     @helper.form(action = routes.CredentialsAuthController.authenticate(), args = Symbol("id") -> "form-login", Symbol("name") -> "form-login") {
      @helper.CSRF.formField
 	<div class="login-or-signup">
 	<div class="form-group ">

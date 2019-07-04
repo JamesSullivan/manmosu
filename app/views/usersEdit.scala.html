@@ -25,17 +25,17 @@
         <input class="profile-photo-upload" data-user-id="@user.userID" type="file">
         *@
 </div>
-  @helper.form(action = controllers.routes.UsersController.usersEdited(user.userID), 'class -> "validated-form profile-edit-form") {
+  @helper.form(action = controllers.routes.UsersController.usersEdited(user.userID), Symbol("class") -> "validated-form profile-edit-form") {
     @helper.CSRF.formField
-    @helper.inputText(userEditForm("email"), '_label -> messages("user_profile.edit.form.email.label"), 'readonly->"readonly", 'value->userEditForm.data("email"), 'style->"color:gray", 'class -> "text-input", '_showConstraints -> false)<br/>
-	@helper.inputText(userEditForm("name"), '_label -> messages("signup.form.username.label"), 'class -> "required text-input", '_showConstraints -> false)<br/>
-	@helper.inputText(userEditForm("photoUri"),'_label -> messages("user_profile.edit.photo"), 'class -> "text-input form-control", '_showConstraints -> false)<br/>
-	@helper.inputText(userEditForm("website"),'_label -> messages("user_profile.edit.form.website.label"), 'class -> "text-input form-control", '_showConstraints -> false)<br/>
-	@helper.inputText(userEditForm("birthDate"),'_label -> messages("user_profile.edit.form.birth_date.label"), 'placeholder -> "yyyy-mm-dd", 'maxlength -> "10", 'id -> "datepicker", 'class -> "text-input date", '_showConstraints -> false)<br/>
-    @helper.inputText(userEditForm("location"),'_label -> messages("user_profile.edit.form.location.label"), 'class -> "text-input form-control", '_showConstraints -> false)<br/>
-    @helper.textarea(userEditForm("description"),'_label -> messages("user_profile.edit.form.about.label"), 'minlength -> "6", 'maxlength -> "500", 'class -> "hintable wmd-input", '_showConstraints -> false)<br/>
-	@helper.checkbox(userEditForm("isSubscribed"), 'style -> "visibility: hidden;", '_label -> "", 'checked -> true, '_showConstraints -> false)<br/>
-	@helper.checkbox(userEditForm("receiveAllUpdates"), 'checked -> true, '_label -> messages("user_profile.edit.form.receive_all_updates.label"),  '_showConstraints -> false)<br/>
+    @helper.inputText(userEditForm("email"), Symbol("_label") -> messages("user_profile.edit.form.email.label"), Symbol("readonly")->"readonly", Symbol("value")->userEditForm.data("email"), Symbol("style")->"color:gray", Symbol("class") -> "text-input", Symbol("_showConstraints") -> false)<br/>
+	@helper.inputText(userEditForm("name"), Symbol("_label") -> messages("signup.form.username.label"), Symbol("class") -> "required text-input", Symbol("_showConstraints") -> false)<br/>
+	@helper.inputText(userEditForm("photoUri"),Symbol("_label") -> messages("user_profile.edit.photo"), Symbol("class") -> "text-input form-control", Symbol("_showConstraints") -> false)<br/>
+	@helper.inputText(userEditForm("website"),Symbol("_label") -> messages("user_profile.edit.form.website.label"), Symbol("class") -> "text-input form-control", Symbol("_showConstraints") -> false)<br/>
+	@helper.inputText(userEditForm("birthDate"),Symbol("_label") -> messages("user_profile.edit.form.birth_date.label"), Symbol("placeholder") -> "yyyy-mm-dd", Symbol("maxlength") -> "10", Symbol("id") -> "datepicker", Symbol("class") -> "text-input date", Symbol("_showConstraints") -> false)<br/>
+    @helper.inputText(userEditForm("location"),Symbol("_label") -> messages("user_profile.edit.form.location.label"), Symbol("class") -> "text-input form-control", Symbol("_showConstraints") -> false)<br/>
+    @helper.textarea(userEditForm("description"),Symbol("_label") -> messages("user_profile.edit.form.about.label"), Symbol("minlength") -> "6", Symbol("maxlength") -> "500", Symbol("class") -> "hintable wmd-input", Symbol("_showConstraints") -> false)<br/>
+	@helper.checkbox(userEditForm("isSubscribed"), Symbol("style") -> "visibility: hidden;", Symbol("_label") -> "", Symbol("checked") -> true, Symbol("_showConstraints") -> false)<br/>
+	@helper.checkbox(userEditForm("receiveAllUpdates"), Symbol("checked") -> true, Symbol("_label") -> messages("user_profile.edit.form.receive_all_updates.label"),  Symbol("_showConstraints") -> false)<br/>
 	<input type="submit" class="post-submit big-submit submit" value="Save profile"/>&nbsp;
 <a class=""  href="/users/@user.userID/@user.sluggedName">@messages("cancel_button")</a>
 <div align="right"><a title="Delete User" href="/users/delete/@user.userID" class="confirmation"><i class="icon-remove-sign">DELETE USER</i></a></div>

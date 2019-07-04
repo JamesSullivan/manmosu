@@ -3,6 +3,7 @@ package models.daos
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
+import scala.reflect.ClassTag
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.util.PasswordInfo
@@ -14,7 +15,7 @@ import models.daos.PasswordInfoDAO.data
 /**
  * The DAO to store the password information.
  */
-class PasswordInfoDAO @Inject() (implicit val ec: ExecutionContext) extends DelegableAuthInfoDAO[PasswordInfo] {
+class PasswordInfoDAO @Inject() (implicit val ec: ExecutionContext, implicit val classTag: ClassTag[PasswordInfo]) extends DelegableAuthInfoDAO[PasswordInfo] {
 
   /**
    * Finds the auth info which is linked with the specified login info.
