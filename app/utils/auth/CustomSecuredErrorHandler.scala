@@ -49,6 +49,7 @@ class CustomSecuredErrorHandler @Inject() (
    * @return The result to send to the client.
    */
   override def onNotAuthorized(implicit request: RequestHeader) = {
+    logger.warn("CustomSecuredErrorHandler onNotAuthorized uri: " + request.uri)
     Future.successful(Forbidden)
   }
 }
