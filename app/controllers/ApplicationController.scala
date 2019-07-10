@@ -174,10 +174,10 @@ class ApplicationController @Inject() (cc: ControllerComponents, implicit val ec
       val comment: String = form("comment").head
       val watching: Boolean = (form("watching").head.toLowerCase == "true")
       val cr = Create.commentRow(commentsId, comment, userID)
-      println("cr: " + cr)
+      // println("cr: " + cr)
       val user = Await.result(daoRead.user(userID), 30.seconds)
       val questionId: Long = form("questionId").head.toLong
-      println("questionId: " + questionId)
+      // println("questionId: " + questionId)
       Await.result(daoWrite.toggleWatchesByQuestionUserIdQuery(questionId, Some(userID), Some(watching)), 30.seconds)
       val commentsIdConfirmed = if (edit) {
         Await.result(daoWrite.updateCommentRow(cr), 30.seconds);
@@ -185,7 +185,7 @@ class ApplicationController @Inject() (cc: ControllerComponents, implicit val ec
       } else {
         Await.result(daoWrite.insertCommentRow(cr), 30.seconds)
       }
-      println("commentsIdConfirmed: " + commentsIdConfirmed)
+      // println("commentsIdConfirmed: " + commentsIdConfirmed)
       if (!edit) {
         if (about == "question") Await.result(daoWrite.insertQuestionCommentRow(id, commentsIdConfirmed), 30.seconds)
         if (about == "answer") Await.result(daoWrite.insertAnswerCommentRow(id, commentsIdConfirmed), 30.seconds)

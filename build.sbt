@@ -8,7 +8,7 @@ scalaVersion := "2.13.0"
 routesGenerator := InjectedRoutesGenerator
 
 maintainer := "your.name@company.org"
-
+cr:
 resolvers ++= Seq(
     "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
     "Sonatype snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",  
