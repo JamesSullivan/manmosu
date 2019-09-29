@@ -3,7 +3,7 @@ name := "manmosu"
 
 version := "0.0.1"
 
-scalaVersion := "2.13.0"
+scalaVersion := "2.13.1"
 
 routesGenerator := InjectedRoutesGenerator
 
@@ -19,19 +19,19 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(ws, filters, guice)
 libraryDependencies ++= Seq(
   "org.apache.commons" % "commons-lang3" % "3.9",  // needed for play-silhouette to work on Java 10
-  "com.mohiva" %% "play-silhouette" % "6.1.0",
-  "com.mohiva" %% "play-silhouette-password-bcrypt" % "6.1.0",
-  "com.mohiva" %% "play-silhouette-persistence" % "6.1.0",
-  "com.mohiva" %% "play-silhouette-crypto-jca" % "6.1.0",
-  "com.mohiva" %% "play-silhouette-testkit" % "6.1.0" % "test",
+  "com.mohiva" %% "play-silhouette" % "6.1.1",
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % "6.1.1",
+  "com.mohiva" %% "play-silhouette-persistence" % "6.1.1",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "6.1.1",
+  "com.mohiva" %% "play-silhouette-testkit" % "6.1.1" % "test",
   "com.iheart" %% "ficus" % "1.4.7",
   "com.typesafe.play" %% "play" % "2.7.3",
-  "net.codingwell" %% "scala-guice" % "4.2.5",
+  "net.codingwell" %% "scala-guice" % "4.2.6",
   "com.typesafe.play" %% "play-slick" % "4.0.2",
   "org.apache.commons" % "commons-email" % "1.5",
   "javax.xml.bind" % "jaxb-api" % "2.3.1",
   "junit" % "junit" % "4.12" % "test",
-  "mysql" % "mysql-connector-java" % "8.0.16",
+  "mysql" % "mysql-connector-java" % "8.0.17",
   "org.jsoup" % "jsoup" % "1.12.1",
   "org.scalatest" %% "scalatest" % "3.0.8" % "test",
   "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % "test",
