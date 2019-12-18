@@ -1,6 +1,5 @@
 @(userEditForm: Form[forms.UserEditForm.Data], user: User, config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
 @import play.api.Play
-@import play.api.Play.current
 @import views.html.snippets._
 @main(messages("metas.default.description",messages("site.name")), Some(user)) {
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" type="text/css" />

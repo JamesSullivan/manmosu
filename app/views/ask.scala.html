@@ -1,7 +1,6 @@
 @(askForm: Form[models.Ask], attachments: Seq[models.daos.slick.Tables.AttachmentRow], user: User, config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
 @import models.daos.slick.QA
 @import play.api.Play
-@import play.api.Play.current
 @import utils.RelativeTime
 @import views.html.snippets._
 @main(messages("metas.default.description",messages("site.name") + " - " + messages("metas.question.title")), Some(user)) {

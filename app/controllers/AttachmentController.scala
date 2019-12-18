@@ -15,6 +15,9 @@ import scala.concurrent.duration.DurationInt
 
 import com.mohiva.play.silhouette.api.Silhouette
 
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
+
 import javax.inject.Inject
 import models.daos.slick.Create
 import models.daos.slick.DAORead
@@ -79,7 +82,7 @@ class AttachmentController @Inject() (cc: ControllerComponents, implicit val ec:
       val ext = if (name.toLowerCase.endsWith(".jpeg")) "jpg" else name.takeRight(3)
       Future.successful(okSendFile("image/" + ext))
     } else if (name.endsWith(".pdf")) {
-      Future.successful(Ok.sendFile(file, fileName = _ => name))
+      Future.successful(Ok.sendFile(file, fileName = _ => Some(name)))
     } else {
       Future.successful(okSendFile(ar.mime.getOrElse("application/x-download"), s"""attachment; filename=$name"""))
     }
@@ -94,9 +97,7 @@ class AttachmentController @Inject() (cc: ControllerComponents, implicit val ec:
     Future.successful(Redirect(routes.QuestionController.ask(questionId)))
   }
 
-  import akka.stream.ActorMaterializer
-  val system = akka.actor.ActorSystem()
-  implicit val materializer = ActorMaterializer()(system)
+  implicit val actorSystem = ActorSystem()
 
   def upload = silhouette.SecuredAction.async(this.parse.maxLength(30L * 1024L * 1024L, parse.multipartFormData)) { implicit request =>
     def show = Future.successful(request.body match {
@@ -109,7 +110,7 @@ class AttachmentController @Inject() (cc: ControllerComponents, implicit val ec:
           logger.info("p.toAbsolutePath(): " + p.toAbsolutePath())
           val f = p.toFile()
           if (f.exists && !f.isDirectory()) f.delete()
-          file.ref.moveFileTo(f)
+          file.ref.moveTo(f)
         }
         Ok("File uploaded")
       }

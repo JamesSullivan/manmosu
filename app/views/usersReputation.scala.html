@@ -1,6 +1,5 @@
 @(user: Option[User], displayUser: models.daos.slick.Tables.UsersRow, reputationEvents: Seq[models.VoteTitleModel], config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
 @import play.api.Play
-@import play.api.Play.current
 @import views.html.snippets._
 @import utils.RelativeTime
 @main(messages("metas.default.description",messages("site.name")), user) {

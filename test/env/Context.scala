@@ -8,9 +8,11 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators._
 import com.mohiva.play.silhouette.test._
-import scala.concurrent.ExecutionContext.Implicits.global
+import javax.inject._
+
 import play.api.inject.guice.GuiceableModule.fromGuiceModule
 import scala.collection.Seq
+import scala.concurrent.ExecutionContext 
 import scala.reflect.ManifestFactory.classType
 import scala.reflect.api.materializeTypeTag
 
@@ -20,7 +22,7 @@ import scala.reflect.api.materializeTypeTag
     /**
      * A fake Guice module.
      */
-    class FakeModule extends AbstractModule with ScalaModule {
+    class FakeModule @Inject()(implicit ec: ExecutionContext) extends AbstractModule with ScalaModule {
       override def configure() = {
         bind[Environment[DefaultEnv]].toInstance(env)
       }

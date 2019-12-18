@@ -1,6 +1,5 @@
 @(user: Option[User], numberOfUsers: Int, authorsRows: Seq[models.daos.slick.Tables.UsersRow], config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
 @import play.api.Play
-@import play.api.Play.current
 @import views.html.snippets._
 @main(messages("metas.default.description",messages("site.name")), user) {
 <h2 class="title page-title subheader">@messages("users.ranking")</h2>

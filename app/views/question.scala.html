@@ -1,6 +1,5 @@
 @(user: Option[User], q: QuestionUser, answers: Seq[AnswerUser], recentTags: Seq[models.daos.slick.Tables.TagxRow],  relevant: String, config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
 @import play.api.Play
-@import play.api.Play.current
 @import views.html.snippets._
 @import play.filters.csrf._
 @import play.filters.csrf.CSRF.Token

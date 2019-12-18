@@ -1,6 +1,5 @@
 @(user: Option[User], numberOfQuestions: Int, questions: Seq[QuestionUser], recentTags: Seq[models.daos.slick.Tables.TagxRow], config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
 @import play.api.Play
-@import play.api.Play.current
 @import utils.RelativeTime
 @import views.html.snippets._
 @main(messages("metas.default.description",messages("site.name")), user) {

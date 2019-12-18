@@ -10,10 +10,10 @@ routesGenerator := InjectedRoutesGenerator
 maintainer := "your.name@company.org"
 
 resolvers ++= Seq(
-    "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
+    "Typesafe repository releases" at "https://repo.typesafe.com/typesafe/releases/",
     "Sonatype snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",  
     "Atlassian Releases" at "https://maven.atlassian.com/public/", 
-    "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+    "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
   )
   
 libraryDependencies ++= Seq(ws, filters, guice)
@@ -25,17 +25,17 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette-crypto-jca" % "6.1.1",
   "com.mohiva" %% "play-silhouette-testkit" % "6.1.1" % "test",
   "com.iheart" %% "ficus" % "1.4.7",
-  "com.typesafe.play" %% "play" % "2.7.3",
+  "com.typesafe.play" %% "play" % "2.8.0",
   "net.codingwell" %% "scala-guice" % "4.2.6",
-  "com.typesafe.play" %% "play-slick" % "4.0.2",
+  "com.typesafe.play" %% "play-slick" % "5.0.0",
   "org.apache.commons" % "commons-email" % "1.5",
   "javax.xml.bind" % "jaxb-api" % "2.3.1",
   "junit" % "junit" % "4.12" % "test",
-  "mysql" % "mysql-connector-java" % "8.0.17",
+  "mysql" % "mysql-connector-java" % "8.0.18",
   "org.jsoup" % "jsoup" % "1.12.1",
-  "org.scalatest" %% "scalatest" % "3.0.8" % "test",
-  "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % "test",
-  "org.webjars" %% "webjars-play" % "2.7.3",
+  "org.scalatest" %% "scalatest" % "3.1.0" % "test",
+  "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % "test",
+  "org.webjars" %% "webjars-play" % "2.8.0",
   "com.typesafe.play" %% "play-mailer" % "7.0.1",
   "com.typesafe.play" %% "play-mailer-guice" % "7.0.1",
   "es.nitaur.markdown" % "txtmark" % "0.16",
@@ -60,7 +60,6 @@ scalacOptions ++= Seq(
   "-Ywarn-dead-code",        // N.B. doesn't work well with the ??? hole
   "-Ywarn-numeric-widen",   
   "-Ywarn-value-discard"
- //  "-Ywarn-unused-import"     // 2.11 only
 )
 
 

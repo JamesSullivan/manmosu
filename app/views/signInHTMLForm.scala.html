@@ -1,7 +1,6 @@
 @(signInForm: Form[forms.SignInForm.Data], socialProviders: com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry)(implicit messages: Messages, request: RequestHeader)
 
 @import play.api.Play
-@import play.api.Play.current
 @*if(request != null){@request.uri}
 @if(request.headers != null){@request.headers} *@
  <fieldset class="col-md-10 center-block">

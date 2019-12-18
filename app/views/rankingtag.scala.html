@@ -1,6 +1,5 @@
 @(user: Option[User], tag: String, answers30DayRanking: Seq[TagRanking], answersRanking: Seq[TagRanking], questions30DayRanking: Seq[TagRanking], questionsRanking: Seq[TagRanking], config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
 @import play.api.Play
-@import play.api.Play.current
 @import views.html.snippets._
 @main(messages("metas.default.description",messages("site.name")), user) {
 <h2 class="title page-title subheader">@messages("users.ranking.tag.title") <a href="/tag/test" class="tag-brutal">@tag</a></h2>

@@ -1,7 +1,6 @@
 @(user: Option[User], displayUser: models.daos.slick.Tables.UsersRow, qnum: Int, questions: Seq[models.VoteTitleModel], anum: Int, answers: Seq[models.VoteTitleModel],  
 	wnum: Int, watches: Seq[models.VoteTitleModel], reputationEvents: Seq[models.VoteTitleModel], tags: Seq[models.daos.slick.Tables.TagxRow], config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
 @import play.api.Play
-@import play.api.Play.current
 @import views.html.snippets._
 @main(messages("metas.default.description",messages("site.name")), user) {
 @basicuserdata(user, displayUser)

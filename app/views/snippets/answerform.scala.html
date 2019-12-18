@@ -1,6 +1,5 @@
 @(id: Long, answerForm: Form[forms.AnswerForm.Answer], attachments: Seq[models.daos.slick.Tables.AttachmentRow], user: User, config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
 @import play.api.Play
-@import play.api.Play.current
 @import utils.RelativeTime
 @import views.html.snippets._
 	<h2 class="title page-title subheader new-answer-title">@messages("newanswer.answer")</h2>

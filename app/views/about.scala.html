@@ -1,6 +1,5 @@
 @(user: Option[User], config: play.api.Configuration)(implicit messages: Messages, request: RequestHeader)
 @import play.api.Play
-@import play.api.Play.current
 @import views.html.snippets._
 @import utils.RelativeTime
 @main(messages("metas.default.description",messages("site.name") + " - " + messages("metas.about.title")), user) {
