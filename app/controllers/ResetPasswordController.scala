@@ -77,7 +77,7 @@ class ResetPasswordController @Inject() (
     logger.info("starting to reset password for " + token)
     authTokenService.validate(token).flatMap {
       case Some(authToken) =>
-        ResetPasswordForm.form.bindFromRequest.fold(
+        ResetPasswordForm.form.bindFromRequest().fold(
           form => Future.successful(BadRequest(views.html.resetPassword(form, token))),
           password => userService.retrieve(authToken.userID).flatMap {
             case Some(user) =>

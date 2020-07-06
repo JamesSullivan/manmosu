@@ -51,7 +51,7 @@ Backup your existing db and files (Manmosu is untested software and could have b
 
 Change the conf/application.conf configuration file to match your database (near the end of the file)
 ```
-slick.dbs.default.db.url="jdbc:mysql://localhost/manmosu?useSSL=false"
+slick.dbs.default.db.url="jdbc:mysql://localhost/manmosu?allowPublicKeyRetrieval=true&useSSL=false"
 slick.dbs.default.db.user=manmosu_user
 slick.dbs.default.db.password="manmosupw"
 ```

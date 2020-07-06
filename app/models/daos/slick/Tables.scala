@@ -14,6 +14,7 @@ abstract class tableEarlyInitialization { this: Tables =>
 object Tables extends tableEarlyInitialization with Tables {
 }
 
+
 /** Slick data model trait for extension, choice of backend or usage in the cake pattern. (Make sure to initialize this late.) */
 trait Tables {
   val profile: MySQLProfile
@@ -1140,9 +1141,9 @@ trait Tables {
     val questionId: Rep[Long] = column[Long]("Question_id")
     /** Database column watchers_id SqlType(BIGINT) */
     val watchersId: Rep[Long] = column[Long]("watchers_id")
-    
-    val pk = primaryKey("Question_Watchers_PK", (questionId, watchersId))
 
+    val pk = primaryKey("Question_Watchers_PK", (questionId, watchersId))
+    
     /** Foreign key referencing Question (database name FK_pu72rhjonka0flev96adthdp0) */
     lazy val questionFk = foreignKey("FK_pu72rhjonka0flev96adthdp0", questionId, Question)(r => r.id, onUpdate=ForeignKeyAction.NoAction, onDelete=ForeignKeyAction.NoAction)
     /** Foreign key referencing Watcher (database name FK_5twinfe7e6g09gaowkeah0498) */

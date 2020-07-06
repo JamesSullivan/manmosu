@@ -18,7 +18,6 @@ import models.daos.OAuth1InfoDAO.data
  * Note: Not thread safe, demo only.
  */
 class OAuth1InfoDAO @Inject() (implicit val ec: ExecutionContext, implicit val classTag: ClassTag[OAuth1Info]) extends DelegableAuthInfoDAO[OAuth1Info] {
- 
 
   /**
    * Finds the auth info which is linked with the specified login info.

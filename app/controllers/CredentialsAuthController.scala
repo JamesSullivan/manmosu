@@ -46,7 +46,7 @@ class CredentialsAuthController @Inject() (
   config: Configuration,
   clock: Clock)(
   implicit
-  webJarsUtil: WebJarsUtil) extends AbstractController(cc) with I18nSupport with Logging {
+  webJarsUtil: WebJarsUtil) extends AbstractController(cc) with I18nSupport  with Logging {
 
   val emailsignup = config.get[Boolean]("feature.emailsignup")
 
@@ -56,7 +56,7 @@ class CredentialsAuthController @Inject() (
    * @return The result to display.
    */
   def authenticate = Action.async { implicit request =>
-    SignInForm.form.bindFromRequest.fold(
+    SignInForm.form.bindFromRequest().fold(
       form => Future.successful(BadRequest(views.html.signIn(form, socialProviderRegistry))),
       data => {
         val credentials = Credentials(data.email, data.password)

@@ -45,7 +45,7 @@
 
 		<br />
 		<p></p>
-     	<p class="not-a-member"><b><a href="@controllers.routes.SignUpController.view">@messages("signup.button.content")</a></b> | <a href="@controllers.routes.ForgotPasswordController.view()" title="@messages("forgot_password.link.text")">@messages("forgot_password.link.text")</a></p>
+     	<p class="not-a-member"><b><a href="@controllers.routes.SignUpController.view()">@messages("signup.button.content")</a></b> | <a href="@controllers.routes.ForgotPasswordController.view()" title="@messages("forgot_password.link.text")">@messages("forgot_password.link.text")</a></p>
 	</div>
      @snippets.sociallogins(socialProviders)
      }

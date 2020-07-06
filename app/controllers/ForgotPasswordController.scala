@@ -45,7 +45,7 @@ class ForgotPasswordController @Inject() (
   mailerClient: MailerClient)(
   implicit
   webJarsUtil: WebJarsUtil,
-  ex: ExecutionContext) extends AbstractController(components) with I18nSupport with Logging{
+  ex: ExecutionContext) extends AbstractController(components) with I18nSupport with Logging {
 
   val mailService = new MailService(config)
 
@@ -68,7 +68,7 @@ class ForgotPasswordController @Inject() (
    */
   def submit = silhouette.UserAwareAction.async { implicit request: Request[AnyContent] =>
     logger.info("Starting forgot password")
-    ForgotPasswordForm.form.bindFromRequest.fold(
+    ForgotPasswordForm.form.bindFromRequest().fold(
       form => Future.successful(BadRequest(views.html.forgotPassword(form))),
       email => {
         val loginInfo = LoginInfo(CredentialsProvider.ID, email)

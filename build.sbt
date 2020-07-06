@@ -1,9 +1,9 @@
 
 name := "manmosu"
 
-version := "0.0.1"
+version := "0.0.2"
 
-scalaVersion := "2.13.1"
+scalaVersion := "2.13.3"
 
 routesGenerator := InjectedRoutesGenerator
 
@@ -18,26 +18,26 @@ resolvers ++= Seq(
   
 libraryDependencies ++= Seq(ws, filters, guice)
 libraryDependencies ++= Seq(
-  "org.apache.commons" % "commons-lang3" % "3.9",  // needed for play-silhouette to work on Java 10
-  "com.mohiva" %% "play-silhouette" % "6.1.1",
-  "com.mohiva" %% "play-silhouette-password-bcrypt" % "6.1.1",
-  "com.mohiva" %% "play-silhouette-persistence" % "6.1.1",
-  "com.mohiva" %% "play-silhouette-crypto-jca" % "6.1.1",
-  "com.mohiva" %% "play-silhouette-testkit" % "6.1.1" % "test",
+  "org.apache.commons" % "commons-lang3" % "3.10",  // needed for play-silhouette to work on Java 10
+  "com.mohiva" %% "play-silhouette" % "7.0.0",
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % "7.0.0",
+  "com.mohiva" %% "play-silhouette-persistence" % "7.0.0",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "7.0.0",
+  "com.mohiva" %% "play-silhouette-testkit" % "7.0.0" % "test",
   "com.iheart" %% "ficus" % "1.4.7",
-  "com.typesafe.play" %% "play" % "2.8.0",
-  "net.codingwell" %% "scala-guice" % "4.2.6",
+  "com.typesafe.play" %% "play" % "2.8.2",
+  "net.codingwell" %% "scala-guice" % "4.2.10",
   "com.typesafe.play" %% "play-slick" % "5.0.0",
   "org.apache.commons" % "commons-email" % "1.5",
   "javax.xml.bind" % "jaxb-api" % "2.3.1",
-  "junit" % "junit" % "4.12" % "test",
-  "mysql" % "mysql-connector-java" % "8.0.18",
-  "org.jsoup" % "jsoup" % "1.12.1",
-  "org.scalatest" %% "scalatest" % "3.1.0" % "test",
-  "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % "test",
+  "junit" % "junit" % "4.13" % "test",
+  "mysql" % "mysql-connector-java" % "8.0.20",
+  "org.jsoup" % "jsoup" % "1.13.1",
+  "org.scalatest" %% "scalatest" % "3.2.0" % "test",
+  "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % "test",
   "org.webjars" %% "webjars-play" % "2.8.0",
-  "com.typesafe.play" %% "play-mailer" % "7.0.1",
-  "com.typesafe.play" %% "play-mailer-guice" % "7.0.1",
+  "com.typesafe.play" %% "play-mailer" % "8.0.1",
+  "com.typesafe.play" %% "play-mailer-guice" % "8.0.1",
   "es.nitaur.markdown" % "txtmark" % "0.16",
   ehcache
 )
@@ -60,6 +60,6 @@ scalacOptions ++= Seq(
   "-Ywarn-dead-code",        // N.B. doesn't work well with the ??? hole
   "-Ywarn-numeric-widen",   
   "-Ywarn-value-discard"
+ //  "-Ywarn-unused-import"     // 2.11 only
 )
-
 

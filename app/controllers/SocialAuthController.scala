@@ -35,7 +35,7 @@ class SocialAuthController @Inject() (
   userService: UserService,
   authInfoRepository: AuthInfoRepository,
   socialProviderRegistry: SocialProviderRegistry,
-  silhouette: Silhouette[DefaultEnv]) extends AbstractController(cc) with I18nSupport with Logging{
+  silhouette: Silhouette[DefaultEnv]) extends AbstractController(cc) with I18nSupport with Logging {
 
   /**
    * Authenticates a user against a social provider.
@@ -47,10 +47,10 @@ class SocialAuthController @Inject() (
     val referer = request.headers.get("referer")
     val uri = referer.getOrElse("")
     val realProvider = if (provider == "BRUTAL") "credential" else provider
-    logger.info("SocialAuthController " + realProvider)
+    logger.info("49 SocialAuthController " + realProvider)
     (socialProviderRegistry.get[SocialProvider](realProvider) match {
       case Some(p: OAuth2Provider with CommonSocialProfileBuilder) =>
-      logger.debug("Social authenticate request.uri: " + request.uri)
+      logger.info("Social authenticate request.uri: " + request.uri)
         p.authenticate().flatMap {
           case Left(result) => Future.successful(result)
           case Right(authInfo) => for {

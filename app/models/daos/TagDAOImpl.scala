@@ -13,9 +13,9 @@ import models.daos.slick.Tables.TagxRow
 class TagDAOImpl {
 
   def apply(newTagxRows: Seq[Tables.TagxRow]) = {
-    tagxRows.clear
+    tagxRows.clear()
     tagxRows ++= (newTagxRows.map { tr: Tables.TagxRow => (tr.name, tr) })
-    sortedTags.clear
+    sortedTags.clear()
     sortedTags ++= (newTagxRows.map { tr: Tables.TagxRow => tr.name })
   }
 

@@ -43,7 +43,7 @@ class ActivateAccountController @Inject() (
   mailerClient: MailerClient,
   userDAOSlick: models.daos.slick.UserDAOSlick)(
   implicit
-  ex: ExecutionContext) extends AbstractController(components) with I18nSupport with Logging {
+  ex: ExecutionContext) extends AbstractController(components) with I18nSupport with Logging{
 
   val mailService = new MailService(config)
   /**

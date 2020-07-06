@@ -48,7 +48,7 @@ class QuestionController @Inject() (cc: ControllerComponents, implicit val ec: E
   val daoRead = new DAORead(dbConfigProvider, config)
   val daoWrite = new DAOWrite(dbConfigProvider, config)
   val tagDAOImpl = new models.daos.TagDAOImpl
-  tagDAOImpl.apply(Await.result(daoRead.tags, 30.seconds))
+  tagDAOImpl.apply(Await.result(daoRead.tags(), 30.seconds))
   val mailService = new utils.MailService(config)
 
   private val path = config.get[String]("attachments.root.fs.path")
@@ -76,7 +76,7 @@ class QuestionController @Inject() (cc: ControllerComponents, implicit val ec: E
   def asked() = silhouette.SecuredAction.async { implicit request =>
     val userID = request.identity.userID
 
-    AskForm.form.bindFromRequest.fold(
+    AskForm.form.bindFromRequest().fold(
       formWithErrors => {
         val questionIdString: String = formWithErrors("questionId").value.getOrElse("0")
         val attachments = if (questionIdString == "0") Seq[models.daos.slick.Tables.AttachmentRow]() else Await.result(daoRead.attachmentsByQuestionId(questionIdString.toLong), 30.seconds)

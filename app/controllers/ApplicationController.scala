@@ -48,7 +48,7 @@ class ApplicationController @Inject() (cc: ControllerComponents, implicit val ec
   val daoRead = new DAORead(dbConfigProvider, config)
   val daoWrite = new DAOWrite(dbConfigProvider, config)
   val tagDAOImpl = new models.daos.TagDAOImpl
-  tagDAOImpl.apply(Await.result(daoRead.tags, 30.seconds))
+  tagDAOImpl.apply(Await.result(daoRead.tags(), 30.seconds))
   val mailService = new utils.MailService(config)
 
   private val path = config.get[String]("attachments.root.fs.path")
@@ -86,7 +86,7 @@ class ApplicationController @Inject() (cc: ControllerComponents, implicit val ec
   def answered(id: Long) = silhouette.SecuredAction.async { implicit request =>
     val userID = request.identity.userID
     val edit: Boolean = request.uri.contains("/edit/")
-    AnswerForm.form.bindFromRequest.fold(
+    AnswerForm.form.bindFromRequest().fold(
       formWithErrors => {
         val answerIdString: String = formWithErrors("answerId").value.getOrElse("0")
         val attachments = if (answerIdString == "0") Seq[models.daos.slick.Tables.AttachmentRow]() else Await.result(daoRead.attachmentsByAnswerId(answerIdString.toLong), 30.seconds)
@@ -144,7 +144,7 @@ class ApplicationController @Inject() (cc: ControllerComponents, implicit val ec
     val ar = Await.result(daoRead.answerRow(answerId), 30.seconds).get
     val solutionId = if (qu.row.solutionId == None) Some(answerId) else None
     println(if (solutionId == None) "Unmarking solution" else "Marking solution")
-    val qr = qu.row.copy(lastupdatedat = Some(timeStampNow), lasttouchedbyId = Some(userID), solutionId = solutionId)
+    val qr = qu.row.copy(lastupdatedat = Some(timeStampNow()), lasttouchedbyId = Some(userID), solutionId = solutionId)
     println("qr: " + qr)
     if (qu.row.authorId.get == userID) {
       Await.result(daoWrite.updateQuestionRowSolutionId(qr), 30.seconds)
@@ -350,7 +350,7 @@ class ApplicationController @Inject() (cc: ControllerComponents, implicit val ec
     val futureNumberOfQuestions = sort match {
       case "unanswered" => daoRead.numberOfUnansweredQuestions
       case "unsolved" => daoRead.numberOfUnsolvedQuestions
-      case "search" => daoRead.numberOfQuestionsByMatch(q)  //.head
+      case "search" => daoRead.numberOfQuestionsByMatch(q)
       case _ => daoRead.numberOfQuestions
     }
     val futureQuestions = sort match {

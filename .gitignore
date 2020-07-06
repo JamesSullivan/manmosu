@@ -5,6 +5,7 @@ log
 logs
 npm-debug.log
 project/.bloop
+project/metals.sbt
 project/project
 project/target
 target

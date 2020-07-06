@@ -68,8 +68,8 @@ class DAOWrite @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
 
   @StaticDatabaseConfig("file:conf/application.conf#slick.dbs.default")
   def updateAnswerVoteRow(answerId: Long, userID: Long, voteType: String) = {
-    print(s"UPDATE Vote v JOIN Answer_Votes av ON v.id = av.votes_id SET v.lastUpdatedAt = ${timeStampNow}, v.type = ${voteType} WHERE av.Answer_id = ${answerId} AND v.author_id = ${userID};")
-    db.run(sqlu"UPDATE Vote v JOIN Answer_Votes av ON v.id = av.votes_id SET v.lastUpdatedAt = ${timeStampNow}, v.type = ${voteType} WHERE av.Answer_id = ${answerId} AND v.author_id = ${userID};")
+    print(s"UPDATE Vote v JOIN Answer_Votes av ON v.id = av.votes_id SET v.lastUpdatedAt = ${timeStampNow()}, v.type = ${voteType} WHERE av.Answer_id = ${answerId} AND v.author_id = ${userID};")
+    db.run(sqlu"UPDATE Vote v JOIN Answer_Votes av ON v.id = av.votes_id SET v.lastUpdatedAt = ${timeStampNow()}, v.type = ${voteType} WHERE av.Answer_id = ${answerId} AND v.author_id = ${userID};")
   }
 
   def updateAnswerinformationRowWithAID(aiid: Long, aid: Long) = db.run(Tables.Answerinformation.filter(_.id === aiid).map(_.answerId).update(Some(aid)))
@@ -106,8 +106,8 @@ class DAOWrite @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
 
   @StaticDatabaseConfig("file:conf/application.conf#slick.dbs.default")
   def updateQuestionVoteRow(questionId: Long, userID: Long, voteType: String) = {
-    print(s"UPDATE Vote v JOIN Question_Votes qv ON v.id = qv.votes_id SET v.lastUpdatedAt = ${timeStampNow}, v.type = ${voteType} WHERE qv.Question_id = ${questionId} AND v.author_id = ${userID};")
-    db.run(sqlu"UPDATE Vote v JOIN Question_Votes qv ON v.id = qv.votes_id SET v.lastUpdatedAt = ${timeStampNow}, v.type = ${voteType} WHERE qv.Question_id = ${questionId} AND v.author_id = ${userID};")
+    print(s"UPDATE Vote v JOIN Question_Votes qv ON v.id = qv.votes_id SET v.lastUpdatedAt = ${timeStampNow()}, v.type = ${voteType} WHERE qv.Question_id = ${questionId} AND v.author_id = ${userID};")
+    db.run(sqlu"UPDATE Vote v JOIN Question_Votes qv ON v.id = qv.votes_id SET v.lastUpdatedAt = ${timeStampNow()}, v.type = ${voteType} WHERE qv.Question_id = ${questionId} AND v.author_id = ${userID};")
   }
 
   def insertQuestionVoteRow(qId: Long, v: Tables.VoteRow) = {

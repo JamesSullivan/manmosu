@@ -67,7 +67,7 @@ class ChangePasswordController @Inject() (
   def submit = silhouette.SecuredAction(WithProvider[DefaultEnv#A](CredentialsProvider.ID)).async {
     implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
       logger.info(request.identity.email.getOrElse("") + "\t changing password")
-      ChangePasswordForm.form.bindFromRequest.fold(
+      ChangePasswordForm.form.bindFromRequest().fold(
         form => Future.successful(BadRequest(views.html.changePassword(form, request.identity))),
         password => {
           val (currentPassword, newPassword) = password

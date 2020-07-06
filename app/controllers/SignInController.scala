@@ -54,7 +54,7 @@ class SignInController @Inject() (
 )(
   implicit
   ex: ExecutionContext
-) extends AbstractController(components) with I18nSupport with Logging{
+) extends AbstractController(components) with I18nSupport with Logging {
 
 
   

@@ -43,7 +43,7 @@ class UsersController @Inject() (cc: ControllerComponents, implicit val ec: Exec
   val dao = new DAORead(dbConfigProvider, config)
 
   val tagDAOImpl = new models.daos.TagDAOImpl
-  tagDAOImpl.apply(Await.result(dao.tags, 30.seconds))
+  tagDAOImpl.apply(Await.result(dao.tags(), 30.seconds))
 
   def users(number: Long, name: String) = silhouette.SecuredAction.async { implicit request =>
     logger.info(request.identity.email.getOrElse("Unidentified") + " displayed user number " + number)
@@ -83,19 +83,19 @@ class UsersController @Inject() (cc: ControllerComponents, implicit val ec: Exec
       val updatedUser = request.identity.copy(name = Some("*****"), website = Some(""), karma = 0, photoUri = Some("https://secure.gravatar.com/avatar/"),
           sluggedName = Some("*****"), birthDate = None, location = None, markedAbout = None, about = None, isSubscribed = false, receiveAllUpdates = false, deleted = true)
         userService.save(updatedUser).map {
-          savedUser => silhouette.env.eventBus.publish(LoginEvent(updatedUser, request)); Redirect(routes.SignInController.signOut)
+          savedUser => silhouette.env.eventBus.publish(LoginEvent(updatedUser, request)); Redirect(routes.SignInController.signOut())
         } recover {
-          case t => Redirect(routes.SignInController.signOut).flashing("error" -> Messages("Unable to update user data: " + t))
+          case t => Redirect(routes.SignInController.signOut()).flashing("error" -> Messages("Unable to update user data: " + t))
         }
     } else {
       logger.info("      " + "\t" + "Delete attempt from " + request.remoteAddress + "\t" + request.headers.get("User-Agent").getOrElse("No User-Agent"))
       logger.info(request.identity.email.getOrElse("Unidentified") + " tried to delete user number " + user)
-      Future.successful(Redirect(routes.SignInController.signOut))
+      Future.successful(Redirect(routes.SignInController.signOut()))
     }
   }
 
   def usersEdited(user: Long) = silhouette.SecuredAction.async { implicit request =>
-    UserEditForm.form.bindFromRequest.fold(
+    UserEditForm.form.bindFromRequest().fold(
       formWithErrors => { Future.successful(BadRequest(views.html.usersEdit(formWithErrors, request.identity, config))) },
       uForm => {
         val updatedUser = request.identity.copy(name = Some(safeText(uForm.name)), photoUri = Some(safeText(uForm.photoUri)), website = Some(safeText(uForm.website)), birthDate = uForm.birthDate.map(_.atStartOfDay),
@@ -104,7 +104,7 @@ class UsersController @Inject() (cc: ControllerComponents, implicit val ec: Exec
         userService.save(updatedUser).map {
           savedUser => silhouette.env.eventBus.publish(LoginEvent(updatedUser, request)); Redirect(routes.UsersController.users(updatedUser.userID, updatedUser.sluggedName.getOrElse("")))
         } recover {
-          case t => BadRequest(views.html.usersEdit(UserEditForm.form.bindFromRequest, request.identity, config)).flashing("error" -> Messages("Unable to update user data: " + t))
+          case t => BadRequest(views.html.usersEdit(UserEditForm.form.bindFromRequest(), request.identity, config)).flashing("error" -> Messages("Unable to update user data: " + t))
         }
       })
   }

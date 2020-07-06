@@ -81,7 +81,7 @@ class SignUpController @Inject() (
    */
   def submit = silhouette.UserAwareAction.async { implicit request =>
     logger.info("attempt to add new user from " + request.remoteAddress)
-    SignUpForm.form.bindFromRequest.fold(
+    SignUpForm.form.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(views.html.signUp(formWithErrors, request.identity.getOrElse(null), socialProviderRegistry, google_datasitekey))),
       data => {
         val googleResponse: String = if(google_datasitekey.length < 1 || google_secret.length < 1) {

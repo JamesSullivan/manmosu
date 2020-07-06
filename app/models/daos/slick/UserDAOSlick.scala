@@ -111,7 +111,7 @@ class UserDAOSlick @Inject() (protected val dbConfigProvider: DatabaseConfigProv
     logger.info("!!!!Saving userID: " + user.userID + "\tuser.name: " + user.name)
     db.run(slickUsers.filter(_.email === user.email).result.headOption).flatMap {
       case Some(dbuser) =>
-	logger.info("\tupdating existing user")
+        logger.info("\tupdating existing user")
         val updatedUser = user.copy(userID = dbuser.userID.get)
         val updatedDBUser = dbuserFromUser(updatedUser)
         db.run(slickLoginInfos.filter(_.providerKey === user.email.get).result.headOption.map {
