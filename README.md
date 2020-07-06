@@ -53,7 +53,7 @@ Change the conf/application.conf configuration file to match your database (near
 ```
 slick.dbs.default.db.url="jdbc:mysql://localhost/manmosu?allowPublicKeyRetrieval=true&useSSL=false"
 slick.dbs.default.db.user=manmosu_user
-slick.dbs.default.db.password="manmosupw"
+slick.dbs.default.db.password="manmosupw!"
 ```
 
 In an effort to cut down on dependencies, Manmosu uses MySQL for text indexing not Solr. If you want to have internal search (optional) you will need to run the following at a MySQL command line: `CREATE FULLTEXT INDEX title_text ON QuestionInformation (title,description)`. 
