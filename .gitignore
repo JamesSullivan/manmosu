@@ -17,6 +17,7 @@ RUNNING_PID
 .history
 /.vscode
 /.bloop
+/.bsp
 /.idea
 /*.iml
 /.idea_modules

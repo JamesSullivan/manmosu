@@ -3,7 +3,7 @@ name := "manmosu"
 
 version := "0.0.2"
 
-scalaVersion := "2.13.3"
+scalaVersion := "2.13.4"
 
 routesGenerator := InjectedRoutesGenerator
 
@@ -25,15 +25,15 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette-crypto-jca" % "7.0.0",
   "com.mohiva" %% "play-silhouette-testkit" % "7.0.0" % "test",
   "com.iheart" %% "ficus" % "1.5.0",
-  "com.typesafe.play" %% "play" % "2.8.2",
+  "com.typesafe.play" %% "play" % "2.8.7",
   "net.codingwell" %% "scala-guice" % "4.2.11",
   "com.typesafe.play" %% "play-slick" % "5.0.0",
   "org.apache.commons" % "commons-email" % "1.5",
   "javax.xml.bind" % "jaxb-api" % "2.3.1",
-  "junit" % "junit" % "4.13" % "test",
-  "mysql" % "mysql-connector-java" % "8.0.21",
+  "junit" % "junit" % "4.13.1" % "test",
+  "mysql" % "mysql-connector-java" % "8.0.22",
   "org.jsoup" % "jsoup" % "1.13.1",
-  "org.scalatest" %% "scalatest" % "3.2.2" % "test",
+  "org.scalatest" %% "scalatest" % "3.2.3" % "test",
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % "test",
   "org.webjars" %% "webjars-play" % "2.8.0",
   "com.typesafe.play" %% "play-mailer" % "8.0.1",

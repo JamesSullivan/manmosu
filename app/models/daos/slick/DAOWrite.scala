@@ -177,6 +177,7 @@ class DAOWrite @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
       case None => "1 - w.active"
       case Some(x) if x == true => "1"
       case Some(x) if x == false => "0"
+      case Some(_) => "1 - w.active"
     }
     db.run(sqlu"UPDATE Question_Watchers qw JOIN Watcher w ON qw.watchers_id = w.id AND qw.Question_id = ${questionId} AND w.watcher_id = ${userID.get} SET w.active = #${active};")
   }

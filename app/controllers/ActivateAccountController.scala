@@ -65,7 +65,7 @@ class ActivateAccountController @Inject() (
           mailService.sendEmailAsync(decodedEmail)(Messages("email.activate.account.subject"), views.html.emails.activateAccount(user, url).body, views.txt.emails.activateAccount(user, url).body);
           result
         }
-      case None =>
+      case _ =>
         logger.info(loginInfo.toString + "\t unable to send activation E-mail")
         Future.successful(result)
     }

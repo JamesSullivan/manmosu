@@ -46,6 +46,7 @@ class PasswordInfoDAOSlick @Inject() (protected val dbConfigProvider: DatabaseCo
         logger.info("newDbLoginfo: ")
         db.run(slickUsers.filter(_.email === loginInfo.providerKey).result.headOption) onComplete {
           case Success(Some(dbuser)) if(dbuser.userID.isDefined) => db.run(query.insertOrUpdate(DBLoginInfo(None, loginInfo.providerID, loginInfo.providerKey, authInfo.password, dbuser.userID.get)))
+          case _ => logger.warn("models.daos.slick.PasswordINfoDAOSlick.save: Unable to find email === loginInfo.providerKey")
         }
     } map { x => authInfo}
       

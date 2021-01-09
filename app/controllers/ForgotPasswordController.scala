@@ -86,7 +86,7 @@ class ForgotPasswordController @Inject() (
                 views.txt.emails.resetPassword(user, url).body);
               result
             }
-          case None =>
+          case _ =>
             logger.info("Forgot password - problem E-mailing password to email")
             Future.successful(Redirect(routes.SignInController.signIn("")).flashing("error" -> (Messages("forgot_password.invalid_email") + "  " + email)))
         }
