@@ -23,7 +23,7 @@
 	<p class = "banner-mark-as-solution">@messages("question.banner.upvote")</p>
   }
 }
-  <section itemscope itemtype="http://schema.org/Article" class="post-area question-area " >
+  <section itemscope itemtype="https://schema.org/Article" class="post-area question-area " >
 	<h1 itemprop="name" class="title subheader main-thread-title question-title">@q.informationRow.title</h1>
 	<div class="post-meta">
     @votecontainer(q, user.isDefined&&user.get.userID==q.row.authorId.getOrElse(0L), user.isDefined&&user.get.userID==q.row.authorId.getOrElse(0L), q.row.solutionId, q.watching, config)
@@ -154,7 +154,6 @@
 	var MODERATOR = false;
 	var KARMA = @{if(user.isDefined){user.get.karma}else{0}};
 	var CONTEXT_PATH = "";
-	var AVIARY_API_KEY = "Your aviary api key(http://www.aviary.com/web-key)";
 	var INK_API_KEY = "Your ink api key(https://developers.inkfilepicker.com/register/)";
 	var ALL_TAGS_URL = "/question/allTags";
 	var MESSAGES_LOADER_URL = "/messages/loadAll";

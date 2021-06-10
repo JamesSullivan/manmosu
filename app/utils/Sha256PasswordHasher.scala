@@ -9,7 +9,7 @@ import utils.Sha256PasswordHasher.ID
  * Implementation of the password hasher based on BCrypt.
  *
  * @param logRounds The log2 of the number of rounds of hashing to apply.
- * @see [[http://www.mindrot.org/files/jBCrypt/jBCrypt-0.2-doc/BCrypt.html#gensalt(int) gensalt]]
+ * @see [[https://www.mindrot.org/files/jBCrypt/jBCrypt-0.2-doc/BCrypt.html#gensalt(int) gensalt]]
  */
 class Sha256PasswordHasher(logRounds: Int = 10) extends PasswordHasher {
 

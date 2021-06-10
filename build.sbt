@@ -3,7 +3,7 @@ name := "manmosu"
 
 version := "0.0.2"
 
-scalaVersion := "2.13.4"
+scalaVersion := "2.13.6"
 
 routesGenerator := InjectedRoutesGenerator
 
@@ -18,24 +18,24 @@ resolvers ++= Seq(
   
 libraryDependencies ++= Seq(ws, filters, guice)
 libraryDependencies ++= Seq(
-  "org.apache.commons" % "commons-lang3" % "3.11",  // needed for play-silhouette to work on Java 10
+  "org.apache.commons" % "commons-lang3" % "3.12.0",  // needed for play-silhouette to work on Java 10
   "com.mohiva" %% "play-silhouette" % "7.0.0",
   "com.mohiva" %% "play-silhouette-password-bcrypt" % "7.0.0",
   "com.mohiva" %% "play-silhouette-persistence" % "7.0.0",
   "com.mohiva" %% "play-silhouette-crypto-jca" % "7.0.0",
   "com.mohiva" %% "play-silhouette-testkit" % "7.0.0" % "test",
   "com.iheart" %% "ficus" % "1.5.0",
-  "com.typesafe.play" %% "play" % "2.8.7",
-  "net.codingwell" %% "scala-guice" % "4.2.11",
+  "com.typesafe.play" %% "play" % "2.8.8",
+  "net.codingwell" %% "scala-guice" % "5.0.1",
   "com.typesafe.play" %% "play-slick" % "5.0.0",
   "org.apache.commons" % "commons-email" % "1.5",
   "javax.xml.bind" % "jaxb-api" % "2.3.1",
-  "junit" % "junit" % "4.13.1" % "test",
-  "mysql" % "mysql-connector-java" % "8.0.22",
+  "junit" % "junit" % "4.13.2" % "test",
+  "mysql" % "mysql-connector-java" % "8.0.25",
   "org.jsoup" % "jsoup" % "1.13.1",
-  "org.scalatest" %% "scalatest" % "3.2.3" % "test",
+  "org.scalatest" %% "scalatest" % "3.2.9" % "test",
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % "test",
-  "org.webjars" %% "webjars-play" % "2.8.0",
+  "org.webjars" %% "webjars-play" % "2.8.8",
   "com.typesafe.play" %% "play-mailer" % "8.0.1",
   "com.typesafe.play" %% "play-mailer-guice" % "8.0.1",
   "es.nitaur.markdown" % "txtmark" % "0.16",
@@ -45,7 +45,7 @@ libraryDependencies ++= Seq(
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 import com.typesafe.sbt.packager.MappingsHelper._
-    mappings in Universal ++= directory(baseDirectory.value / "public")
+    Universal / mappings ++= directory(baseDirectory.value / "public")
        
 scalacOptions ++= Seq(
   // "-target:jvm-1.8",

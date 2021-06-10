@@ -2,7 +2,7 @@ Manmosu Q&A - beta
 ======
 
 
-[Click here to visit Manmosu Demo Site](http://manmosu.solutions.asia)
+[Click here to visit Manmosu Demo Site](https://manmosu.solutions.asia)
 ---------- 
 
 
@@ -23,7 +23,7 @@ The project currently uses the original database schema and keeps the same urls 
 
  set up an instance of Manmosu
 
-Manmosu requires [Java](http://www.oracle.com/technetwork/java/javase/downloads/index.html), [MySQL](https://dev.mysql.com/downloads/mysql/) and Scala [SBT](https://www.scala-sbt.org/download.html) to be installed and set up.   
+Manmosu requires [Java](https://openjdk.java.net/), [MySQL](https://dev.mysql.com/downloads/mysql/) and Scala [SBT](https://www.scala-sbt.org/download.html) to be installed and set up.   
 
 download Manmosu
 ```
