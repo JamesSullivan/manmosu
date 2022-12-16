@@ -2,7 +2,7 @@ Manmosu Q&A - beta
 ======
 
 
-[Click here to visit Manmosu Demo Site](https://manmosu.solutions.asia)
+This projects uses Scala 2 and is archived (no longer actively developed).
 ---------- 
 
 
